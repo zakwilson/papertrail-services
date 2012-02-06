@@ -65,9 +65,9 @@ class Service::Mail < Service
           <h4>About "<%= h payload[:saved_search][:name] %>":</h4>
           <ul>
             <li>Query: <%= h payload[:saved_search][:query] %></li>            
-            <li>Run search: <%= link_to payload[:name], payload[:saved_search][:html_search_url] %></li>
-            <li>Time: <%= link_to 'US Pacific', 'http://www.timeanddate.com/worldclock/city.html?n=137' %></li>
-            <li><%= link_to 'Edit or unsubscribe', payload[:saved_search][:html_edit_url] %></li>
+            <li>Run search: <a href="<%= payload[:saved_search][:html_search_url] %>"><%= payload[:name] %></a></li>
+            <li>Time: <a href="<%= 'http://www.timeanddate.com/worldclock/city.html?n=137' %>">US Pacific</a></li>
+            <li><a href="<%= payload[:saved_search][:html_edit_url] %>">Edit or unsubscribe</a></li>
           </ul>
 
             <div style="color:#444;font-size:12px;line-height:130%;border-top:1px solid #ddd;margin-top:35px;">
