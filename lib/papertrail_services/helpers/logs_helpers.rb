@@ -3,10 +3,6 @@ require 'tilt'
 module PapertrailServices
   module Helpers
     module LogsHelpers
-      def syslog_format(message)
-        "#{Time.parse(message[:received_at]).strftime('%b %d %X')} #{message[:source_name]} #{message[:program]}: #{message[:message]}"
-      end
-      
       def self.sample_payload
         {
           "min_id"=>"31171139124469760", "max_id"=>"31181206313902080", "reached_record_limit"=>true,
@@ -25,6 +21,18 @@ module PapertrailServices
             {"source_ip"=>"127.0.0.1", "display_received_at"=>"Jul 22 14:50:01", "source_name"=>"alien", "facility"=>"Cron", "id"=>31181206313902080, "hostname"=>"alien", "program"=>"CROND", "message"=>"(root) CMD (/usr/lib/sa/sa1 -S DISK 1 1)", "severity"=>"Info", "source_id"=>6, "received_at"=>"2011-07-22T14:50:01-07:00"}
           ]
         }.with_indifferent_access
+      end
+
+      def syslog_format(message)
+        "#{Time.parse(message[:received_at]).strftime('%b %d %X')} #{message[:source_name]} #{message[:program]}: #{message[:message]}"
+      end
+      
+      def html_syslog_format(message, html_search_url)
+        received_at = Time.parse(message[:received_at])
+        url = html_search_url + '?' + { :time => received_at.to_i }.to_query
+
+        s = "<a href=\"#{url}\">#{received_at.strftime('%b %d %X')}"
+        s << " #{message[:source_name]} #{message[:program]}: #{message[:message]}"
       end
 
       def erb(template, target_binding)

@@ -56,7 +56,7 @@ class Service::Mail < Service
             <%- if !payload[:events].empty? -%>
               <%- payload[:events].each do |event| -%>
                 <p style="line-height:1.5em;margin:0;padding:2px 0;border-bottom:1px solid #f1f1f1;">
-                  <%=h syslog_format(event) %>
+                  <%=h html_syslog_format(event, payload[:saved_search][:html_search_url]) %>
                 </p>
               <%- end -%>
             <%- else -%>
