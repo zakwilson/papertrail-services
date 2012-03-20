@@ -1,3 +1,7 @@
+
+# Default the timezone to PST if it isn't set
+Time.zone_default = ActiveSupport::TimeZone['Pacific Time (US & Canada)']
+
 module PapertrailServices
   class App < Sinatra::Base
     configure do

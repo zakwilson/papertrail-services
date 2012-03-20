@@ -8,7 +8,11 @@ module PapertrailServices
       svc = new(event, settings, payload)
 
       # Set the timezone if it exists as a setting
-      Time.zone = settings[:time_zone]
+      if settings[:time_zone].present?
+        Time.zone = settings[:time_zone]
+      else
+        Time.zone = nil
+      end
 
       event_method = "receive_#{event}".to_sym
       if svc.respond_to?(event_method)
