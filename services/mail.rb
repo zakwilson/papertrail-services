@@ -68,7 +68,6 @@ class Service::Mail < Service
           <ul>
             <li>Query: <%= h payload[:saved_search][:query] %></li>            
             <li>Run search: <a href="<%= payload[:saved_search][:html_search_url] %>"><%= payload[:name] %></a></li>
-            <li>Time: <a href="<%= 'http://www.timeanddate.com/worldclock/city.html?n=137' %>">US Pacific</a></li>
             <li><a href="<%= payload[:saved_search][:html_edit_url] %>">Edit or unsubscribe</a></li>
           </ul>
 
