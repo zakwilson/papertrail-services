@@ -92,7 +92,7 @@ class Service::Mail < Service
 
       <%- if !payload[:events].empty? -%>
         <%- payload[:events].each do |event| -%>
-      <%=h syslog_format(event) %>
+      <%= syslog_format(event) %>
         <%- end -%>
       <%- else -%>
       No matching events.

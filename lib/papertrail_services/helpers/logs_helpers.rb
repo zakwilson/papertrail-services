@@ -24,7 +24,7 @@ module PapertrailServices
       end
 
       def syslog_format(message)
-        "#{Time.parse(message[:received_at]).strftime('%b %d %X')} #{message[:source_name]} #{message[:program]}: #{message[:message]}"
+        "#{Time.zone.parse(message[:received_at]).strftime('%b %d %X')} #{message[:source_name]} #{message[:program]}: #{message[:message]}"
       end
       
       def html_syslog_format(message, html_search_url)
