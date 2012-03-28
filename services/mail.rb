@@ -36,7 +36,7 @@ class Service::Mail < Service
   end
 
   def html_syslog_format(message, html_search_url)
-    received_at = Time.parse(message[:received_at])
+    received_at = Time.zone.parse(message[:received_at])
     url = html_search_url + '?' + { :time => received_at.to_i }.to_query
 
     s = "<a href=\"#{url}\">#{received_at.strftime('%b %d %X')}</a>"
