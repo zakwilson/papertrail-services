@@ -13,25 +13,32 @@ class Service::GeckoBoard < Service
 
   def deliver(token, widget_key, count)
     # http://docs.geckoboard.com/api/push.html
-    geckoboard.post(URI.join("https://push.geckoboard.com/v1/send/", token).to_s,
-      { :api_key => widget_key,
+    res = http_post URI.join("https://push.geckoboard.com/v1/send/", token).to_s do |req|
+      req.headers[:content_type] = 'application/json'
+
+      req.body = {
+        :api_key => widget_key,
         :item => [
           { 
             :text => "",
-            :value => value
+            :value => count
           }
         ],
         :item => [
           { 
             :text => "",
-            :value => value
+            :value => count
           }
         ]
-      }
-    )
-  end
+      }.to_json
+    end
 
-  def geckoboard
-    @geckoboard ||= Faraday.new
+    if !res.success?
+      msg = "Error connecting to GeckoBoard (#{res.status})"
+      if res.body
+        msg += ": " + res.body[0..255]
+      end
+      raise_config_error(msg)
+    end
   end
 end
