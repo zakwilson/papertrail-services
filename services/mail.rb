@@ -39,7 +39,7 @@ class Service::Mail < Service
     received_at = Time.parse(message[:received_at])
     url = html_search_url + '?' + { :time => received_at.to_i }.to_query
 
-    s = "<a href=\"#{url}\">#{received_at.strftime('%b %d %X')}"
+    s = "<a href=\"#{url}\">#{received_at.strftime('%b %d %X')}</a>"
     s << " #{h(message[:source_name])} #{h(message[:program])}: #{h(message[:message])}"
   end
 
