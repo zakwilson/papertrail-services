@@ -11,25 +11,21 @@ class Service::GeckoBoard < Service
     raise_config_error "Error sending GeckoBoard message: #{$!}"
   end
 
-  def deliver(token, widget_key, count)
+  def deliver(token, widget_key, value)
     # http://docs.geckoboard.com/api/push.html
     res = http_post URI.join("https://push.geckoboard.com/v1/send/", token).to_s do |req|
       req.headers[:content_type] = 'application/json'
 
       req.body = {
         :api_key => widget_key,
-        :item => [
-          { 
-            :text => "",
-            :value => count
-          }
-        ],
-        :item => [
-          { 
-            :text => "",
-            :value => count
-          }
-        ]
+        :data => {
+          :item => [
+            { 
+              :text => "",
+              :value => value
+            }
+          ]
+        }
       }.to_json
     end
 
