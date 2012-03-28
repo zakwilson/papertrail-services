@@ -75,7 +75,7 @@ class Service::Mail < Service
           <h4>About "<%= h payload[:saved_search][:name] %>":</h4>
           <ul>
             <li>Query: <%= h payload[:saved_search][:query] %></li>
-            <li>Time zone: <%= h Time.zone %></li>            
+            <li>Time zone: <%= h Time.zone.name %></li>            
             <li>Run search: <a href="<%= payload[:saved_search][:html_search_url] %>"><%= payload[:name] %></a></li>
             <li><a href="<%= payload[:saved_search][:html_edit_url] %>">Edit or unsubscribe</a></li>            
           </ul>
@@ -110,7 +110,7 @@ class Service::Mail < Service
 
       About "<%= payload[:saved_search][:name] %>":
          Query: <%= payload[:saved_search][:query] %>
-         Time zone: <%= Time.zone %>
+         Time zone: <%= Time.zone.name %>
          Search: <%= payload[:saved_search][:html_search_url] %>
 
       Edit or unsubscribe: <%= payload[:saved_search][:html_edit_url] %>
