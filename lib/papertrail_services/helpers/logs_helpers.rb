@@ -27,14 +27,6 @@ module PapertrailServices
         "#{Time.zone.parse(message[:received_at]).strftime('%b %d %X')} #{message[:source_name]} #{message[:program]}: #{message[:message]}"
       end
       
-      def html_syslog_format(message, html_search_url)
-        received_at = Time.parse(message[:received_at])
-        url = html_search_url + '?' + { :time => received_at.to_i }.to_query
-
-        s = "<a href=\"#{url}\">#{received_at.strftime('%b %d %X')}"
-        s << " #{message[:source_name]} #{message[:program]}: #{message[:message]}"
-      end
-
       def erb(template, target_binding)
         ERB.new(template, nil, '-').result(target_binding)
       end

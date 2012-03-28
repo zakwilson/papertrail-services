@@ -35,6 +35,14 @@ class Service::Mail < Service
     end
   end
 
+  def html_syslog_format(message, html_search_url)
+    received_at = Time.parse(message[:received_at])
+    url = html_search_url + '?' + { :time => received_at.to_i }.to_query
+
+    s = "<a href=\"#{url}\">#{received_at.strftime('%b %d %X')}"
+    s << " #{h(message[:source_name])} #{h(message[:program])}: #{h(message[:message])}"
+  end
+
   def html_email
     erb(unindent(<<-EOF), binding)
       <html>
@@ -56,7 +64,7 @@ class Service::Mail < Service
             <%- if !payload[:events].empty? -%>
               <%- payload[:events].each do |event| -%>
                 <p style="line-height:1.5em;margin:0;padding:2px 0;border-bottom:1px solid #f1f1f1;">
-                  <%=h html_syslog_format(event, payload[:saved_search][:html_search_url]) %>
+                  <%= html_syslog_format(event, payload[:saved_search][:html_search_url]) %>
                 </p>
               <%- end -%>
             <%- else -%>
@@ -66,9 +74,10 @@ class Service::Mail < Service
 
           <h4>About "<%= h payload[:saved_search][:name] %>":</h4>
           <ul>
-            <li>Query: <%= h payload[:saved_search][:query] %></li>            
+            <li>Query: <%= h payload[:saved_search][:query] %></li>
+            <li>Time zone: <%= h Time.zone %></li>            
             <li>Run search: <a href="<%= payload[:saved_search][:html_search_url] %>"><%= payload[:name] %></a></li>
-            <li><a href="<%= payload[:saved_search][:html_edit_url] %>">Edit or unsubscribe</a></li>
+            <li><a href="<%= payload[:saved_search][:html_edit_url] %>">Edit or unsubscribe</a></li>            
           </ul>
 
             <div style="color:#444;font-size:12px;line-height:130%;border-top:1px solid #ddd;margin-top:35px;">
@@ -101,8 +110,8 @@ class Service::Mail < Service
 
       About "<%= payload[:saved_search][:name] %>":
          Query: <%= payload[:saved_search][:query] %>
+         Time zone: <%= Time.zone %>
          Search: <%= payload[:saved_search][:html_search_url] %>
-         Time: US Pacific
 
       Edit or unsubscribe: <%= payload[:saved_search][:html_edit_url] %>
 
