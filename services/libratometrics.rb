@@ -24,7 +24,7 @@ class Service::LibratoMetrics < Service
     begin
       previous_data = client.fetch name, :start_time => times.first,
         :finish_time => times.last
-      
+
       values.each do |source, source_values|
         if previous_values = previous_data[source]
           previous_values.each do |previous_value|
@@ -40,7 +40,7 @@ class Service::LibratoMetrics < Service
 
     queue = client.new_queue
 
-     values.each do |source_name, hash|
+    values.each do |source_name, hash|
       hash.each do |time, count|
         queue.add name => {
           :source       => source_name,
@@ -51,7 +51,9 @@ class Service::LibratoMetrics < Service
       end
     end
 
-    queue.submit
+    unless queue.empty?
+      queue.submit
+    end
   rescue Librato::Metrics::CredentialsMissing, Librato::Metrics::Unauthorized
     raise_config_error("Error sending to Librato Metrics: Invalid email address or token")
   rescue Librato::Metrics::MetricsError => e
