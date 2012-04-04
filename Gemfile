@@ -17,6 +17,13 @@ gem 'tinder', '~> 1.4'
 # service :hipchat
 gem 'hipchat-api'
 
+# service :libratometrics
+gem 'librato-metrics', '~> 0.5'
+
+group :development do
+  gem 'foreman'
+end
+
 group :building do
   gem 'rake'
 end
@@ -26,4 +33,8 @@ group :production do
 
   # Use unicorn as the web server
   gem 'unicorn'
+end
+
+group :test do
+  gem 'mocha', :require => false
 end

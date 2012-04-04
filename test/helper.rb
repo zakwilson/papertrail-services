@@ -1,6 +1,8 @@
 require 'test/unit'
 require File.expand_path('../../config/bootstrap', __FILE__)
 
+require 'mocha'
+
 class PapertrailServices::TestCase < Test::Unit::TestCase
   def test_default
   end
