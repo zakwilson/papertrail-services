@@ -16,7 +16,7 @@ class Service::HipChat < Service
     search_url = payload[:saved_search][:html_search_url]
     matches = pluralize(events.size, 'match')
 
-    deliver %{"#{search_name}" search found #{matches} — #{search_url}}
+    deliver %{"#{search_name}" search found #{matches} — <a href="#{search_url}">#{search_url}</a>}
 
     unless events.size.zero?
       logs, remaining = [], MESSAGE_LIMIT
