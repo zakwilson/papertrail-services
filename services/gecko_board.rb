@@ -13,11 +13,11 @@ class Service::GeckoBoard < Service
 
   def deliver(token, widget_key, value)
     # http://docs.geckoboard.com/api/push.html
-    res = http_post URI.join("https://push.geckoboard.com/v1/send/", token).to_s do |req|
+    res = http_post URI.join("https://push.geckoboard.com/v1/send/", widget_key).to_s do |req|
       req.headers[:content_type] = 'application/json'
 
       req.body = {
-        :api_key => widget_key,
+        :api_key => token,
         :data => {
           :item => [
             { 
