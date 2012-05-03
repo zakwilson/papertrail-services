@@ -8,7 +8,7 @@ class GeckoBoardTest < PapertrailServices::TestCase
   def test_logs
     svc = service(:logs, { :token => 'abc', :widget_key => 'def' }, payload)
 
-    @stubs.post '/v1/send/abc' do |env|
+    @stubs.post '/v1/send/def' do |env|
       [200, {}, '']
     end
 
@@ -18,7 +18,7 @@ class GeckoBoardTest < PapertrailServices::TestCase
   def test_failure
     svc = service(:logs, { :token => 'abc', :widget_key => 'def' }, payload)
 
-    @stubs.post '/v1/send/abc' do |env|
+    @stubs.post '/v1/send/def' do |env|
       [400, {}, '{ "error":"Bad juju" }']
     end
 
@@ -26,7 +26,7 @@ class GeckoBoardTest < PapertrailServices::TestCase
       svc.receive_logs
     end
 
-    @stubs.post '/v1/send/abc' do |env|
+    @stubs.post '/v1/send/def' do |env|
       [500, {}, 'Internal Server Error']
     end
 
