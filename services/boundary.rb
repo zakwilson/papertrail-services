@@ -21,12 +21,7 @@ class Service::Boundary < Service
       ]
     }
     
-    include_host_tags = settings[:include_host_tags].to_i == 1
-    
-    if include_host_tags
-      annotation[:tags] += payload[:events].map { |e| e[:source_name] }.uniq.sort
-    end
-    
+    annotation[:tags] += payload[:events].map { |e| e[:source_name] }.uniq.sort
     annotation[:tags].uniq!
 
     # Setup HTTP connection
