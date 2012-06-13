@@ -17,7 +17,7 @@ class Service::Boundary < Service
         {
           :rel => 'papertrail',
           :href => "#{payload[:saved_search][:html_search_url]}?centered_on_id=#{payload[:events].first[:id]}",
-          :node => 'Start of log messages'
+          :note => 'Start of log messages'
         }
       ]
     }
