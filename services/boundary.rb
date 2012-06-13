@@ -1,7 +1,5 @@
 # encoding: utf-8
 
-# Initial implementation by Mike Heffner:
-#  https://github.com/librato/papertrail_pagerduty_webhook
 class Service::Boundary < Service
   def receive_logs
     return if payload[:events].blank?
