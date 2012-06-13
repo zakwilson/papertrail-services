@@ -33,7 +33,7 @@ class Service::Pagerduty < Service
       end
 
       min_id, max_id = events.first[:id], events.last[:id]
-      base_url = settings[:base_url].present? ? settings[:base_url] : 'https://papertrailapp.com/events'
+      base_url = settings[:base_url].present? ? settings[:base_url] : payload[:saved_search][:html_search_url]
 
       body[:details][:log_start_url] =
         "#{base_url}?centered_on_id=#{payload[:min_id]}"
