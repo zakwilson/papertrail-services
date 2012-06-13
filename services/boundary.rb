@@ -2,6 +2,9 @@
 
 class Service::Boundary < Service
   def receive_logs
+    raise_config_error 'Missing Organization ID' if settings[:orgid].to_s.empty?
+    raise_config_error 'Missing API Key' if settings[:token].to_s.empty?
+
     return if payload[:events].blank?
 
     annotation = {
