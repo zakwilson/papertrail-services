@@ -11,7 +11,7 @@ class Service::Mail < Service
   def mail_message
     @mail_message ||= begin
       mail = ::Mail.new
-      mail.from    'Papertrail <support@papertrailapp.com>'      
+      mail.from    'Papertrail <support@papertrailapp.com>'
       recipients = settings[:addresses].split(/,/).map { |a| a.strip }
       mail.to      recipients
       mail['reply-to'] = recipients.join(', ')
@@ -62,7 +62,7 @@ class Service::Mail < Service
 
           <div style="font-family:monaco,monospace,courier,'courier new';padding:4px;font-size:11px;border:1px solid #f1f1f1;border-bottom:0;">
             <%- if !payload[:events].empty? -%>
-              <%- payload[:events].each do |event| -%>
+              <%- payload[:events].slice(0, 1000).each do |event| -%>
                 <p style="line-height:1.5em;margin:0;padding:2px 0;border-bottom:1px solid #f1f1f1;">
                   <%= html_syslog_format(event, payload[:saved_search][:html_search_url]) %>
                 </p>
@@ -76,8 +76,8 @@ class Service::Mail < Service
           <ul>
             <li>Query: <%= h payload[:saved_search][:query] %></li>
             <li>Run search: <a href="<%= payload[:saved_search][:html_search_url] %>"><%= payload[:saved_search][:name] %></a></li>
-            <li>Time zone: <%= h Time.zone.name %></li>            
-            <li><a href="<%= payload[:saved_search][:html_edit_url] %>">Edit or unsubscribe</a></li>            
+            <li>Time zone: <%= h Time.zone.name %></li>
+            <li><a href="<%= payload[:saved_search][:html_edit_url] %>">Edit or unsubscribe</a></li>
           </ul>
 
             <div style="color:#444;font-size:12px;line-height:130%;border-top:1px solid #ddd;margin-top:35px;">
