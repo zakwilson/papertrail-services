@@ -11,14 +11,17 @@ class Service::HipChat < Service
     raise_config_error 'Missing hipchat token' if settings[:token].to_s.empty?
     raise_config_error 'Missing hipchat room_id' if settings[:room_id].to_s.empty?
 
-    events = payload[:events]
+    dont_display_messages = settings[:dont_display_messages].to_i == 1
+
+    events      = payload[:events]
     search_name = payload[:saved_search][:name]
-    search_url = payload[:saved_search][:html_search_url]
+    search_url  = payload[:saved_search][:html_search_url]
+
     matches = pluralize(events.size, 'match')
 
     deliver %{"#{search_name}" search found #{matches} — <a href="#{search_url}">#{search_url}</a>}
 
-    unless events.size.zero?
+    if !events.empty? && !dont_display_messages
       logs, remaining = [], MESSAGE_LIMIT
       events.each do |event|
         new_entry = CGI.escapeHTML(syslog_format(event)) + "\n"
