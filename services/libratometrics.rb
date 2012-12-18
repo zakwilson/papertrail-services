@@ -12,7 +12,6 @@ class Service::LibratoMetrics < Service
 
     payload[:events].each do |event|
       time = Time.parse(event[:received_at])
-      time = time.to_i - (time.to_i % 60)
       values[event[:source_name]][time] += 1
     end
 
