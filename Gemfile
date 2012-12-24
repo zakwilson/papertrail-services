@@ -18,10 +18,11 @@ gem 'tinder', '~> 1.4'
 gem 'hipchat-api'
 
 # service :libratometrics
-gem 'librato-metrics', '~> 0.5'
+gem 'librato-metrics', '~> 1.0.1', :require => "librato/metrics"
 
 group :development do
   gem 'foreman'
+  gem 'heroku'
 end
 
 group :building do
@@ -33,6 +34,8 @@ group :production do
 
   # Use unicorn as the web server
   gem 'unicorn'
+  
+  gem 'puma'
 end
 
 group :test do
