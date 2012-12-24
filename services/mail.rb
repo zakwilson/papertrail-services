@@ -5,7 +5,15 @@ class Service::Mail < Service
   def receive_logs
     raise_config_error "No email addresses specified" if settings[:addresses].to_s.empty?
 
-    mail_message.deliver
+    begin
+      mail_message.deliver
+    rescue Net::SMTPSyntaxError => e
+      if e.message == '501 Syntax error'
+        raise ArgumentError, "#{e.message} delivering to #{settings[:addresses].to_s}"
+      else
+        raise e
+      end
+    end
   end
 
   def mail_message
