@@ -26,9 +26,9 @@ class Service::Boundary < Service
     annotation[:tags].uniq!
 
     # Setup HTTP connection
-    http.basic_auth settings[:token], ''
+    http.basic_auth settings[:token].to_s.strip, ''
     http.headers['content-type'] = 'application/json'
 
-    http_post "https://api.boundary.com/#{settings[:orgid]}/annotations", annotation.to_json
+    http_post "https://api.boundary.com/#{settings[:orgid].to_s.strip}/annotations", annotation.to_json
   end
 end

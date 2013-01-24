@@ -17,7 +17,7 @@ class Service::LibratoMetrics < Service
     end
 
     client = Librato::Metrics::Client.new
-    client.authenticate(settings[:user], settings[:token])
+    client.authenticate(settings[:user].to_s.strip, settings[:token].to_s.strip)
     client.agent_identifier("Papertrail-Services/1.0")
 
     queue = client.new_queue

@@ -20,7 +20,7 @@ class Service::Pagerduty < Service
       hosts = events.collect { |e| e[:source_name] }.sort.uniq
 
       body = {
-        :service_key => settings[:service_key],
+        :service_key => settings[:service_key].to_s.strip,
         :event_type => 'trigger',
         :description => "#{settings[:description]} (#{hosts.join(', ')})",
         :details => {
@@ -40,7 +40,10 @@ class Service::Pagerduty < Service
       body[:details][:log_end_url] =
         "#{base_url}?centered_on_id=#{payload[:max_id]}"
 
-      http_post "https://events.pagerduty.com/generic/2010-04-15/create_event.json", body.to_json
+      resp = http_post "https://events.pagerduty.com/generic/2010-04-15/create_event.json", body.to_json
+      unless resp.success?
+        puts "pagerduty: #{payload[:saved_search][:id]}: #{resp.inspect}"
+      end
     end
   end
 end
