@@ -10,6 +10,12 @@ module PapertrailServices
           config.api_key = ENV['HOPTOAD_API_KEY']
         end
       end
+
+      if ENV['SENTRY_DSN'].present?
+        Raven.configure do |config|
+          config.dsn = ENV['SENTRY_DSN']
+        end
+      end
     end
 
     def self.service(svc)
@@ -48,11 +54,22 @@ module PapertrailServices
       end
 
       def report_exception(e)
-        $stderr.puts "Error: #{e.class}: #{e.message}"
+        $stderr.puts "#{request.path_info}: Error: #{e.class}: #{e.message}"
         $stderr.puts "\t#{e.backtrace.join("\n\t")}"
 
         if ENV['HOPTOAD_API_KEY'].present?
-          HoptoadNotifier.notify(e)
+          begin
+            HoptoadNotifier.notify(e)
+          rescue
+          end
+        end
+
+        if ENV['SENTRY_DSN'].present?
+          begin
+            evt = Event.capture_rack_exception(e, env)
+            Raven.send(evt)
+          rescue
+          end
         end
       end
     end
