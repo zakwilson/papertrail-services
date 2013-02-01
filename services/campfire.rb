@@ -13,12 +13,15 @@ class Service::Campfire < Service
     paste = payload[:events].collect { |event| syslog_format(event) }.join("\n")
 
     play_sound = settings[:play_sound].to_i == 1
+    sound = settings['sound'].blank? ? 'rimshot' : settings['sound']
 
     room.speak message
     if paste && paste != ''
       room.paste paste
     end
-    room.play "rimshot" if play_sound && room.respond_to?(:play)
+    if play_sound && room.respond_to?(:play)
+      room.play sound
+    end
   rescue Faraday::Error::ConnectionFailed
     raise_config_error "Connection refused — invalid campfire subdomain."
   end
