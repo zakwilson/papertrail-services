@@ -7,7 +7,7 @@ gem 'faraday'
 
 
 gem 'hoptoad_notifier'
-gem "sentry-raven", :git => "https://github.com/getsentry/raven-ruby.git"
+gem "sentry-raven"
 
 # service: mail
 gem 'mail', '~> 2.2'
