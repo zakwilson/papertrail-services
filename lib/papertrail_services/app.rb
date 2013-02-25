@@ -68,7 +68,8 @@ module PapertrailServices
           begin
             evt = Event.capture_rack_exception(e, env)
             Raven.send(evt)
-          rescue
+          rescue => e
+            puts "Sentry exception: #{e.class}: #{e.message}: #{e.backtrace.join("\n\t")}"
           end
         end
       end
