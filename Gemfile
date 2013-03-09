@@ -1,11 +1,12 @@
 ruby "1.9.3"
 
-source :rubygems
+source 'https://rubygems.org'
 
 gem 'sinatra'
-gem 'activesupport', '~> 2.3', :require => 'active_support'
+gem 'activesupport', '~> 3.0', :require => 'active_support'
 gem 'yajl-ruby', :require => [ 'yajl', 'yajl/json_gem' ]
 gem 'faraday'
+gem 'tzinfo'
 
 
 gem 'hoptoad_notifier'

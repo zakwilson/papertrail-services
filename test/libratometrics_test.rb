@@ -19,7 +19,7 @@ class LibratoMetricsTest < PapertrailServices::TestCase
 
 
   def test_unauthorized
-    Librato::Metrics::Queue.any_instance.expects(:submit).raises(Librato::Metrics::Unauthorized)
+    Librato::Metrics::Queue.any_instance.expects(:submit).raises(Librato::Metrics::Unauthorized.new('unauthorized'))
 
     svc = service(:logs, { :name => 'gauge', :user => 'a@b.com', :token => 'abc' }, shifted_payload)
 
