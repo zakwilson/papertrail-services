@@ -42,7 +42,7 @@ class Service::Pagerduty < Service
 
       resp = http_post "https://events.pagerduty.com/generic/2010-04-15/create_event.json", body.to_json
       unless resp.success?
-        puts "pagerduty: #{payload[:saved_search][:id]}: #{resp.inspect}"
+        puts "pagerduty: #{payload[:saved_search][:id]}: #{resp[:status]}: #{resp[:body]}"
       end
     end
   end
