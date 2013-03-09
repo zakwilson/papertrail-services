@@ -9,7 +9,11 @@ module PapertrailServices
 
       # Set the timezone if it exists as a setting
       if settings[:time_zone].present?
-        Time.zone = settings[:time_zone]
+        begin
+          Time.zone = settings[:time_zone]
+        rescue
+          # If we couldn't load the timezone, we still want to work
+        end
       else
         Time.zone = nil
       end
