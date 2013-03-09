@@ -24,7 +24,9 @@ module PapertrailServices
       end
 
       def syslog_format(message)
-        "#{Time.zone.parse(message[:received_at]).strftime('%b %d %X')} #{message[:source_name]} #{message[:program]}: #{message[:message]}"
+        time = Time.zone.at(Time.iso8601(message[:received_at]))
+
+        "#{time.strftime('%b %d %X')} #{message[:source_name]} #{message[:program]}: #{message[:message]}"
       end
       
       def erb(template, target_binding)
