@@ -42,7 +42,13 @@ class Service::Pagerduty < Service
 
       resp = http_post "https://events.pagerduty.com/generic/2010-04-15/create_event.json", body.to_json
       unless resp.success?
-        puts "pagerduty: #{payload[:saved_search][:id]}: #{resp.status}: #{resp.body}"
+        error_body = json_decode(resp.body) rescue nil
+
+        if error_body
+          raise_config_error("Unable to send: #{error_body['errors'].join(", ")}")
+        else
+          puts "pagerduty: #{payload[:saved_search][:id]}: #{resp.status}: #{resp.body}"
+        end
       end
     end
   end
