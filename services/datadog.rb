@@ -32,14 +32,18 @@ class Service::Datadog < Service
       }
     end
 
-    http_post "https://app.datadoghq.com/api/v1/series" do |req|
+    resp = http_post "https://app.datadoghq.com/api/v1/series" do |req|
       req.params = {
         :api_key => settings[:api_key]
       }
-
       req.body = {
         :series => serieses
       }.to_json
+    end
+
+    unless resp.success?
+      puts "datadog: #{payload[:saved_search][:id]}: #{resp.status}: #{resp.body}"
+      raise_config_error "Could not submit metrics"
     end
   end
 end
