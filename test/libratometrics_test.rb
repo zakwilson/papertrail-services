@@ -47,10 +47,10 @@ class LibratoMetricsTest < PapertrailServices::TestCase
 
     spayload = payload.dup
     spayload[:events].each do |event|
-      time = Time.parse(event[:received_at])
+      time = Time.iso8601(event[:received_at])
       time = time.to_i - (time.to_i % 60)
       delta = now - time
-      event[:received_at] = Time.at(now - (delta % max_real_offset)).to_s
+      event[:received_at] = Time.at(now - (delta % max_real_offset)).iso8601
     end
 
     spayload
