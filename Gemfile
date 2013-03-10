@@ -1,12 +1,16 @@
-source :rubygems
+ruby "1.9.3"
+
+source 'https://rubygems.org'
 
 gem 'sinatra'
-gem 'activesupport', '~> 2.3', :require => 'active_support'
+gem 'activesupport', '~> 3.0', :require => 'active_support'
 gem 'yajl-ruby', :require => [ 'yajl', 'yajl/json_gem' ]
 gem 'faraday'
+gem 'tzinfo'
 
 
 gem 'hoptoad_notifier'
+gem "sentry-raven"
 
 # service: mail
 gem 'mail', '~> 2.2'
@@ -18,10 +22,11 @@ gem 'tinder', '~> 1.4'
 gem 'hipchat-api'
 
 # service :libratometrics
-gem 'librato-metrics', '~> 0.5'
+gem 'librato-metrics', '~> 1.0.1', :require => "librato/metrics"
 
 group :development do
   gem 'foreman'
+  gem 'heroku'
 end
 
 group :building do
@@ -33,6 +38,8 @@ group :production do
 
   # Use unicorn as the web server
   gem 'unicorn'
+  
+  gem 'puma'
 end
 
 group :test do
