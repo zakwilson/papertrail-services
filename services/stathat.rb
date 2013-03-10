@@ -20,7 +20,7 @@ class Service::Stathat < Service
           :stat => settings[:stat],
           :count => count,
           :t => time
-        }
+        }.to_param
       end
     end
   rescue Faraday::Error::ConnectionFailed
