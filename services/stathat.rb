@@ -21,6 +21,7 @@ class Service::Stathat < Service
           :count => count,
           :t => time
         }
+      end
     end
   rescue Faraday::Error::ConnectionFailed
     raise_config_error "Connection refused"
