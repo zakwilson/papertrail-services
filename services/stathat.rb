@@ -14,10 +14,13 @@ class Service::Stathat < Service
     end
 
     counts.each do |time, count|
-      http_post "http://api.stathat.com/ez", :ezkey => settings[:ezkey],
-        :stat => settings[:stat],
-        :count => count,
-        :t => time
+      http_post "http://api.stathat.com/ez" do |req|
+        req.body = {
+          :ezkey => settings[:ezkey],
+          :stat => settings[:stat],
+          :count => count,
+          :t => time
+        }
     end
   rescue Faraday::Error::ConnectionFailed
     raise_config_error "Connection refused"
