@@ -13,15 +13,20 @@ class Service::Stathat < Service
       counts[time] += 1
     end
 
-    counts.each do |time, count|
-      http_post "http://api.stathat.com/ez" do |req|
-        req.body = {
-          :ezkey => settings[:ezkey],
-          :stat => settings[:stat],
-          :count => count,
-          :t => time
-        }.to_param
-      end
+    data = counts.map do |time, count|
+      {
+        :stat => settings[:stat],
+        :count => count,
+        :t => time
+      }
+    end
+
+    http_post "http://api.stathat.com/ez" do |req|
+      req.headers[:content_type] = 'application/json'
+      req.body = {
+        :ezkey => settings[:ezkey],
+        :data => data
+      }.to_json
     end
   rescue Faraday::Error::ConnectionFailed
     raise_config_error "Connection refused"
