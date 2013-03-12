@@ -21,12 +21,17 @@ class Service::Stathat < Service
       }
     end
 
-    http_post "http://api.stathat.com/ez" do |req|
+    resp = http_post "http://api.stathat.com/ez" do |req|
       req.headers[:content_type] = 'application/json'
       req.body = {
         :ezkey => settings[:ezkey],
         :data => data
       }.to_json
+    end
+
+    unless resp.success?
+      puts "stathat: #{payload[:saved_search][:id]}: #{resp.status}: #{resp.body}"
+      raise_config_error "Could not submit metrics"
     end
   rescue Faraday::Error::ConnectionFailed
     raise_config_error "Connection refused"
