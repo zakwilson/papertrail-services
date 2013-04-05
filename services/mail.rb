@@ -85,8 +85,6 @@ class Service::Mail < Service
                 <strong>Can we help?</strong>
                 <br />
                 support@papertrailapp.com - http://help.papertrailapp.com/
-                <br />
-                Seven Scale, PO Box 85694, Seattle WA 98145
               </p>
             </div>
           </div>
