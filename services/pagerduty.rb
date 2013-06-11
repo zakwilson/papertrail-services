@@ -19,10 +19,16 @@ class Service::Pagerduty < Service
       events.sort_by! { |e| e[:id].to_i }
       hosts = events.collect { |e| e[:source_name] }.sort.uniq
 
+      if hosts.length < 5
+        description = "#{settings[:description]} (#{hosts.join(', ')})"
+      else
+        description = "#{settings[:description]} (from #{hosts.length} hosts)"
+      end
+
       body = {
         :service_key => settings[:service_key].to_s.strip,
         :event_type => 'trigger',
-        :description => "#{settings[:description]} (#{hosts.join(', ')})",
+        :description => description,
         :details => {
           :messages => events.collect { |event| syslog_format(event) }
         }
