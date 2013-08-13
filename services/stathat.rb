@@ -29,7 +29,7 @@ class Service::Stathat < Service
       }.to_json
     end
 
-    unless resp.success?
+    unless resp && resp.success?
       puts "stathat: #{payload[:saved_search][:id]}: #{resp.status}: #{resp.body}"
       raise_config_error "Could not submit metrics"
     end
