@@ -67,7 +67,7 @@ module PapertrailServices
 
         if ENV['SENTRY_DSN'].present?
           begin
-            Raven::Event.capture_exception(e, env)
+            Raven::Rack.capture_exception(e, env)
           rescue => e
             puts "Sentry exception: #{e.class}: #{e.message}: #{e.backtrace.join("\n\t")}"
           end
