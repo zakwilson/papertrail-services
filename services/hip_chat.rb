@@ -45,7 +45,11 @@ class Service::HipChat < Service
   end
 
   def deliver(message)
-    hipchat.rooms_message(settings[:room_id], 'Papertrail', message, settings[:notify])
+    res = hipchat.rooms_message(settings[:room_id], 'Papertrail', message, settings[:notify])
+    unless res.code == 200
+      message = res.parsed_response['error']['message'] rescue "Responded with HTTP #{res.code}"
+      raise message
+    end
   end
 
   def hipchat
