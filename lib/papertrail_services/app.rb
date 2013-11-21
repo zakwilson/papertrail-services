@@ -40,7 +40,7 @@ module PapertrailServices
           e.message
         rescue Net::SMTPSyntaxError, Net::SMTPServerBusy => e
           status 400
-          report_exception(e, :search_alert_id => payload[:saved_search][:id],
+          report_exception(e, :saved_search_id => payload[:saved_search][:id],
             :addresses => settings[:addresses])
         rescue Object => e
           report_exception(e, :saved_search_id => payload[:saved_search][:id])
