@@ -42,7 +42,7 @@ module PapertrailServices
           status 400
           report_exception(e, :addresses => settings[:addresses])
         rescue Object => e
-          report_exception(e, :search_alert_id => payload[:saved_search][:id])
+          report_exception(e, :saved_search_id => payload[:saved_search][:id])
           status 500
           'error'
         end
