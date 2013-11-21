@@ -33,6 +33,9 @@ module PapertrailServices
             status "#{svc.hook_name} Service could not process request"
           end
         rescue Service::ConfigurationError => e
+          search_alert_id = payload[:saved_search][:id] rescue nil
+          puts "search_alert_id=#{search_alert_id} hook_name=#{svc.hook_name} error=#{e.class.to_s.inspect} error_message=#{e.message.to_s.inspect}" rescue nil
+
           status 400
           e.message
         rescue Net::SMTPSyntaxError => e

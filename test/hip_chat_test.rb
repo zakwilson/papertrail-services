@@ -10,6 +10,7 @@ class HipChatTest < PapertrailServices::TestCase
       @rooms ||= {}
       @rooms[room_id] ||= []
       @rooms[room_id] << message
+      HTTParty::Response.new(nil, OpenStruct.new(:body => {}, :code => 200), proc {})
     end
   end
 
