@@ -8,10 +8,11 @@ class Service::Boundary < Service
     return if payload[:events].blank?
 
     annotation = {
-      :type => settings[:title].presence || payload[:saved_search][:name],
-      :subtype => payload[:events].first[:message],
-      :start_time => Time.zone.parse(payload[:events].first[:received_at]).to_i,
+      :title => settings[:title].presence || payload[:saved_search][:name],
+      :message => payload[:events].first[:message],
+      :createdAt => Time.zone.parse(payload[:events].first[:received_at]).to_i,
       :end_time => Time.zone.parse(payload[:events].last[:received_at]).to_i,
+      :sender => 'Papertrail'
       :tags => settings[:tags].to_s.split(/, */).compact,
       :links => [
         {
@@ -29,6 +30,6 @@ class Service::Boundary < Service
     http.basic_auth settings[:token].to_s.strip, ''
     http.headers['content-type'] = 'application/json'
 
-    http_post "https://api.boundary.com/#{settings[:orgid].to_s.strip}/annotations", annotation.to_json
+    http_post "https://api.boundary.com/#{settings[:orgid].to_s.strip}/events", annotation.to_json
   end
 end
