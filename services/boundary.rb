@@ -10,10 +10,13 @@ class Service::Boundary < Service
     annotation = {
       :title => settings[:title].presence || payload[:saved_search][:name],
       :message => payload[:events].first[:message],
-      :createdAt => Time.zone.parse(payload[:events].first[:received_at]).to_i,
-      :end_time => Time.zone.parse(payload[:events].last[:received_at]).to_i,
-      :sender => 'Papertrail'
+      :receivedAt => Time.iso8601(payload[:events].first[:received_at]).to_i,
+      :sender => 'Papertrail',
       :tags => settings[:tags].to_s.split(/, */).compact,
+      :source => {
+        :ref => payload[:events].first[:source_name],
+        :type => 'host'
+      },
       :links => [
         {
           :rel => 'papertrail',
