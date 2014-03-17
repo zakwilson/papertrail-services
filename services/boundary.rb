@@ -22,7 +22,7 @@ class Service::Boundary < Service
         :title => settings[:title].presence || payload[:saved_search][:name],
         :message => message,
         :fingerprintFields => %w(@title @message),
-        :receivedAt => Time.iso8601(event[:received_at]).to_i,
+        :receivedAt => Time.iso8601(event[:received_at]).to_i * 1000,
         :sender => {
           :ref => 'Papertrail',
           :type => 'Papertrail'
