@@ -7,28 +7,46 @@ class Service::Boundary < Service
 
     return if payload[:events].blank?
 
-    annotation = {
-      :type => settings[:title].presence || payload[:saved_search][:name],
-      :subtype => payload[:events].first[:message],
-      :start_time => Time.zone.parse(payload[:events].first[:received_at]).to_i,
-      :end_time => Time.zone.parse(payload[:events].last[:received_at]).to_i,
-      :tags => settings[:tags].to_s.split(/, */).compact,
-      :links => [
-        {
-          :rel => 'papertrail',
-          :href => "#{payload[:saved_search][:html_search_url]}?centered_on_id=#{payload[:events].first[:id]}",
-          :note => 'Start of log messages'
-        }
-      ]
-    }
-    
-    annotation[:tags] += payload[:events].map { |e| e[:source_name] }.uniq.sort
-    annotation[:tags].uniq!
-
     # Setup HTTP connection
     http.basic_auth settings[:token].to_s.strip, ''
     http.headers['content-type'] = 'application/json'
 
-    http_post "https://api.boundary.com/#{settings[:orgid].to_s.strip}/annotations", annotation.to_json
+    payload[:events].each do |event|
+      message = payload[:events].first[:message]
+
+      if message.length > 255
+        message = message[0..252] + '...'
+      end
+
+      annotation = {
+        :title => settings[:title].presence || payload[:saved_search][:name],
+        :message => message,
+        :fingerprintFields => %w(@title @message),
+        :receivedAt => Time.iso8601(event[:received_at]).to_i * 1000,
+        :sender => {
+          :ref => 'Papertrail',
+          :type => 'Papertrail'
+        },
+        :tags => settings[:tags].to_s.split(/, */).compact + [ event[:source_name] ],
+        :source => {
+          :ref => event[:source_name],
+          :type => 'host'
+        },
+        :properties => {
+          'Papertrail Logs' => [
+            {
+              :href => "#{payload[:saved_search][:html_search_url]}?centered_on_id=#{event[:id]}",
+            }
+          ]
+        }
+      }
+
+      annotation[:tags].uniq!
+
+      resp = http_post "https://api.boundary.com/#{settings[:orgid].to_s.strip}/events", annotation.to_json
+      unless resp.success?
+        puts "boundary: #{payload[:saved_search][:id]}: #{resp.status}: #{resp.body}"
+      end
+    end
   end
 end

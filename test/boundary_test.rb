@@ -8,7 +8,7 @@ class BoundaryTest < PapertrailServices::TestCase
   def test_logs
     svc = service(:logs, { :type => 'k', :tags => 'one, two', :orgid => 'a', :token => 'b' }, payload)
 
-    @stubs.post '/a/annotations' do |env|
+    @stubs.post '/a/events' do |env|
       [200, {}, '']
     end
 
@@ -18,7 +18,7 @@ class BoundaryTest < PapertrailServices::TestCase
   def test_logs_with_include_host_tags
     svc = service(:logs, { :type => 'k', :tags => 'one, two', :orgid => 'a', :token => 'b', :include_host_tags => 1 }, payload)
 
-    @stubs.post '/a/annotations' do |env|
+    @stubs.post '/a/events' do |env|
       [200, {}, '']
     end
 
