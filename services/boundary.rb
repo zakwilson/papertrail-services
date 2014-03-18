@@ -15,7 +15,7 @@ class Service::Boundary < Service
       message = payload[:events].first[:message]
 
       if message.length > 255
-        message = message[0..252] + '...'
+        message = message[0..251] + '...'
       end
 
       annotation = {
