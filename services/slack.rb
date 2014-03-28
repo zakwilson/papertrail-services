@@ -14,6 +14,8 @@ class Service::Slack < Service
 
     data = {
       :text => message,
+      :username => 'papertrail',
+      :icon_url => 'https://0.gravatar.com/avatar/e52fd880666c3708c72496114a64dec0?s=140',
       :attachments => [
         {
           :text => attachment,
