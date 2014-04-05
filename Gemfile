@@ -8,6 +8,7 @@ gem 'yajl-ruby', :require => [ 'yajl', 'yajl/json_gem' ]
 gem 'faraday'
 gem 'tzinfo'
 
+gem 'metriks'
 
 gem 'hoptoad_notifier'
 gem "sentry-raven"
