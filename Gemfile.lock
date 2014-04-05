@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/eric/metriks-librato_metrics.git
+  revision: 0e46e7c5f4eff47c199023a184f3d8ef52da12d0
+  specs:
+    metriks-librato_metrics (0.0)
+      metriks (>= 0.9.9.6)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -122,6 +129,7 @@ DEPENDENCIES
   librato-metrics (~> 1.0.1)
   mail (~> 2.2)
   metriks
+  metriks-librato_metrics!
   mocha
   pg
   puma

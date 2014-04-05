@@ -17,6 +17,12 @@ module PapertrailServices
           config.dsn = ENV['SENTRY_DSN']
         end
       end
+
+      if ENV['LIBRATO_EMAIL'].present? && ENV['LIBRATO_TOKEN'].present?
+        reporter = Metriks::LibratoMetricsReporter.new(ENV['LIBRATO_EMAIL'], ENV['LIBRATO_TOKEN'],
+          :source => ENV['DYNO'] || Socket.gethostname, :on_error => proc { |e| report_exception(e) })
+        reporter.start
+      end
     end
 
     def self.service(svc)
