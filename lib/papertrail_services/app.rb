@@ -1,4 +1,5 @@
 require 'active_support/all'
+require 'metriks'
 
 # Default the timezone to PST if it isn't set
 Time.zone_default = ActiveSupport::TimeZone['Pacific Time (US & Canada)']
@@ -19,6 +20,7 @@ module PapertrailServices
       end
 
       if ENV['LIBRATO_EMAIL'].present? && ENV['LIBRATO_TOKEN'].present?
+        require 'metriks/librato_metrics_reporter'
         reporter = Metriks::LibratoMetricsReporter.new(ENV['LIBRATO_EMAIL'], ENV['LIBRATO_TOKEN'],
           :source => ENV['DYNO'] || Socket.gethostname, :on_error => proc { |e| report_exception(e) })
         reporter.start
