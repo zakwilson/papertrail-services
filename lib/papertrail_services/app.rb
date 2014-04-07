@@ -60,10 +60,10 @@ module PapertrailServices
           status 400
           report_exception(e, :saved_search_id => payload[:saved_search][:id],
             :addresses => settings[:addresses])
-        rescue TimeoutError
+        rescue TimeoutError, ::PapertrailServices::Service::TimeoutError
           Metriks.meter("papertrail_services.#{svc.hook_name}.error").mark
           Metriks.meter("papertrail_services.#{svc.hook_name}.error.timeout").mark
-          report_exception(e, :saved_search_id => payload[:saved_search][:id])
+          # report_exception(e, :saved_search_id => payload[:saved_search][:id])
           status 500
           'error'
         rescue Object => e
