@@ -25,4 +25,10 @@ after_fork do |server, worker|
   if defined?(ActiveRecord::Base)
     ActiveRecord::Base.establish_connection
   end
+
+  if $metriks_reporters && $metriks_reporters.is_a?(Array)
+    $metriks_reporters.each do |reporter|
+      reporter.restart
+    end
+  end
 end

@@ -24,6 +24,9 @@ module PapertrailServices
         reporter = Metriks::LibratoMetricsReporter.new(ENV['LIBRATO_EMAIL'], ENV['LIBRATO_TOKEN'],
           :source => ENV['DYNO'] || Socket.gethostname, :on_error => proc { |e| report_exception(e) })
         reporter.start
+
+        $metriks_reporters ||= []
+        $metriks_reporters << reporter
       end
     end
 
