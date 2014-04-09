@@ -12,7 +12,7 @@ class Service::Boundary < Service
     http.headers['content-type'] = 'application/json'
 
     payload[:events].each do |event|
-      message = payload[:events].first[:message]
+      message = event[:message]
 
       if message.length > 255
         message = message[0..251] + '...'
