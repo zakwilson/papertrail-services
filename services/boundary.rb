@@ -44,9 +44,19 @@ class Service::Boundary < Service
       annotation[:tags].uniq!
 
       Metriks.timer('papertrail_services.boundary.post').time do
-        resp = http_post "https://api.boundary.com/#{settings[:orgid].to_s.strip}/events", annotation.to_json
-        unless resp.success?
-          puts "boundary: #{payload[:saved_search][:id]}: #{resp.status}: #{resp.body}"
+        while true
+          resp = http_post "https://api.boundary.com/#{settings[:orgid].to_s.strip}/events", annotation.to_json
+
+          unless resp.success?
+            puts "boundary: #{payload[:saved_search][:id]}: #{resp.status}: #{resp.body}"
+          end
+
+          if resp.status == 429
+            sleep 1
+            next
+          end
+
+          break
         end
       end
     end
