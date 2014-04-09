@@ -48,5 +48,8 @@ class Service::Boundary < Service
         puts "boundary: #{payload[:saved_search][:id]}: #{resp.status}: #{resp.body}"
       end
     end
+  rescue ::PapertrailServices::Service::TimeoutError
+    puts "boundary: #{payload[:saved_search][:id]}: #{settings[:orgid].to_s.strip}: timeout"
+    raise
   end
 end
