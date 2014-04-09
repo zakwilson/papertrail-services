@@ -81,6 +81,7 @@ GEM
     rest-client (1.6.7)
       mime-types (>= 1.16)
     rubyzip (0.9.9)
+    scrolls (0.3.8)
     sentry-raven (0.6.0)
       faraday (>= 0.7.6)
       hashie (>= 1.1.0)
@@ -136,6 +137,7 @@ DEPENDENCIES
   pg
   puma
   rake
+  scrolls
   sentry-raven
   sinatra
   tinder (~> 1.4)

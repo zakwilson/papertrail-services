@@ -1,5 +1,6 @@
 require 'active_support/all'
 require 'metriks'
+require 'scrolls'
 
 # Default the timezone to PST if it isn't set
 Time.zone_default = ActiveSupport::TimeZone['Pacific Time (US & Canada)']
@@ -32,9 +33,13 @@ module PapertrailServices
 
     def self.service(svc)
       post "/#{svc.hook_name}/:event" do
+        Scrolls::Log.context[:service] = svc.hook_name
+
         begin
           settings = HashWithIndifferentAccess.new(json_decode(params[:settings]))
           payload  = HashWithIndifferentAccess.new(json_decode(params[:payload]))
+
+          Scrolls::Log.context[:saved_search_id] = payload[:saved_search][:id] rescue nil
 
           Metriks.timer("papertrail_services.#{svc.hook_name}").time do
             if svc.receive(:logs, settings, payload)
@@ -48,8 +53,7 @@ module PapertrailServices
         rescue Service::ConfigurationError => e
           Metriks.meter("papertrail_services.#{svc.hook_name}.configuration_error").mark
 
-          search_alert_id = payload[:saved_search][:id] rescue nil
-          puts "search_alert_id=#{search_alert_id} hook_name=#{svc.hook_name} error=#{e.class.to_s.inspect} error_message=#{e.message.to_s.inspect}" rescue nil
+          Scrolls.log_exception(e)
 
           status 400
           e.message
@@ -71,6 +75,8 @@ module PapertrailServices
           report_exception(e, :saved_search_id => payload[:saved_search][:id])
           status 500
           'error'
+        ensure
+          Scrolls::Log.context = {}
         end
       end
 

@@ -5,13 +5,15 @@ class Service::Boundary < Service
     raise_config_error 'Missing Organization ID' if settings[:orgid].to_s.empty?
     raise_config_error 'Missing API Key' if settings[:token].to_s.empty?
 
+    Scrolls::Log.context[:boundary_orgid] = settings[:orgid].to_s.strip
+
     return if payload[:events].blank?
 
     # Setup HTTP connection
     http.basic_auth settings[:token].to_s.strip, ''
     http.headers['content-type'] = 'application/json'
 
-    payload[:events].each do |event|
+    payload[:events].each_with_index do |event, idx|
       message = event[:message]
 
       if message.length > 255
@@ -44,24 +46,29 @@ class Service::Boundary < Service
       annotation[:tags].uniq!
 
       Metriks.timer('papertrail_services.boundary.post').time do
+        count = 0
+
         while true
           resp = http_post "https://api.boundary.com/#{settings[:orgid].to_s.strip}/events", annotation.to_json
 
-          unless resp.success?
-            puts "boundary: #{payload[:saved_search][:id]}: #{resp.status}: #{resp.body}"
-          end
-
           if resp.status == 429
+            count += 1
+            Scrolls.log(:idx => idx, :status => resp.status, :body => resp.body, :count => count)
+
             sleep 1
             next
+          end
+
+          unless resp.success?
+            Scrolls.log(:idx => idx, :status => resp.status, :body => resp.body)
           end
 
           break
         end
       end
     end
-  rescue ::PapertrailServices::Service::TimeoutError
-    puts "boundary: #{payload[:saved_search][:id]}: #{settings[:orgid].to_s.strip}: timeout"
+  rescue ::PapertrailServices::Service::TimeoutError => e
+    Scrolls.log_exception(e)
     raise
   end
 end
