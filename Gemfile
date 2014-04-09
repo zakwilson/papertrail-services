@@ -7,6 +7,7 @@ gem 'activesupport', '~> 3.0', :require => 'active_support'
 gem 'yajl-ruby', :require => [ 'yajl', 'yajl/json_gem' ]
 gem 'faraday'
 gem 'tzinfo'
+gem 'net-http-persistent'
 
 gem 'metriks'
 gem 'metriks-librato_metrics', :git => 'https://github.com/eric/metriks-librato_metrics.git'

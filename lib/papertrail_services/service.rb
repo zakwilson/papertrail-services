@@ -108,7 +108,7 @@ module PapertrailServices
     def http(options = {})
       @http ||= begin
         Faraday.new(faraday_options.merge(options)) do |b|
-          b.adapter :net_http
+          b.adapter :net_http_persistent
         end
       end
     end

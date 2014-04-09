@@ -67,6 +67,7 @@ GEM
     multi_json (1.7.9)
     multi_xml (0.5.1)
     multipart-post (1.2.0)
+    net-http-persistent (2.9.4)
     netrc (0.7.7)
     pg (0.14.1)
     polyglot (0.3.3)
@@ -131,6 +132,7 @@ DEPENDENCIES
   metriks
   metriks-librato_metrics!
   mocha
+  net-http-persistent
   pg
   puma
   rake
