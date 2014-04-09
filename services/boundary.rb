@@ -43,9 +43,11 @@ class Service::Boundary < Service
 
       annotation[:tags].uniq!
 
-      resp = http_post "https://api.boundary.com/#{settings[:orgid].to_s.strip}/events", annotation.to_json
-      unless resp.success?
-        puts "boundary: #{payload[:saved_search][:id]}: #{resp.status}: #{resp.body}"
+      Metriks.timer('papertrail_services.boundary.post').time do
+        resp = http_post "https://api.boundary.com/#{settings[:orgid].to_s.strip}/events", annotation.to_json
+        unless resp.success?
+          puts "boundary: #{payload[:saved_search][:id]}: #{resp.status}: #{resp.body}"
+        end
       end
     end
   rescue ::PapertrailServices::Service::TimeoutError
