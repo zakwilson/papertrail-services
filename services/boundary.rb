@@ -68,7 +68,7 @@ class Service::Boundary < Service
       end
     end
   rescue ::PapertrailServices::Service::TimeoutError => e
-    Scrolls.log_exception(:from => :boundary, e)
+    Scrolls.log_exception({:from => :boundary}, e)
     raise
   end
 end

@@ -53,7 +53,7 @@ module PapertrailServices
         rescue Service::ConfigurationError => e
           Metriks.meter("papertrail_services.#{svc.hook_name}.configuration_error").mark
 
-          Scrolls.log_exception(:from => :service, e)
+          Scrolls.log_exception({ :from => :service }, e)
 
           status 400
           e.message
