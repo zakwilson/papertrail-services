@@ -29,6 +29,8 @@ module PapertrailServices
         $metriks_reporters ||= []
         $metriks_reporters << reporter
       end
+
+      Scrolls.init(:exceptions => 'single')
     end
 
     def self.service(svc)
