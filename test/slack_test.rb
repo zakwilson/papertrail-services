@@ -17,9 +17,7 @@ class SlackTest < PapertrailServices::TestCase
 
   def test_long_logs
     long_payload = payload.dup
-    100.times do
-      long_payload[:events] += payload[:events]
-    end
+    long_payload[:events] *= 100
 
     svc = service(:logs, { :slack_url => "https://site.slack.com/services/hooks/incoming-webhook?token=aaaa" }, long_payload)
 
@@ -30,6 +28,15 @@ class SlackTest < PapertrailServices::TestCase
     svc.receive_logs
   end
 
+  def test_format_content_with_truncation
+    long_payload = payload.dup
+    long_payload[:events] *= 100
+
+    slack = Service::Slack.new
+    message = slack.format_content(long_payload[:events])
+
+    assert message.length < 8000
+  end
 
   def service(*args)
     super Service::Slack, *args
