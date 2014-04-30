@@ -118,7 +118,7 @@ class Service::Mail < Service
       Can we help?
       support@papertrailapp.com - http://help.papertrailapp.com/
 
-      Seven Scale, PO Box 85694, Seattle WA 98145
+      Papertrail Inc, 1425 Broadway #20-4242, Seattle WA 98122 US
     EOF
   end
 end
