@@ -9,7 +9,7 @@ class Service::Slack < Service
 
     data = {
       :text => message,
-      :parse_mode => 'none',
+      :parse => 'none',
       :attachments => [
         {
           :text => attachment,
@@ -28,7 +28,7 @@ class Service::Slack < Service
   end
 
   # Slack truncates attachments at 8000 bytes
-  def format_content(events, limit = 6000)
+  def format_content(events, limit = 7990)
     body = ''
 
     events.each do |event|
