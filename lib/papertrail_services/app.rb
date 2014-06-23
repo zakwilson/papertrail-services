@@ -37,11 +37,13 @@ module PapertrailServices
       post "/#{svc.hook_name}/:event" do
         Scrolls::Log.context[:service] = svc.hook_name
 
+        saved_search_id = nil
+
         begin
           settings = HashWithIndifferentAccess.new(json_decode(params[:settings]))
           payload  = HashWithIndifferentAccess.new(json_decode(params[:payload]))
 
-          Scrolls::Log.context[:saved_search_id] = payload[:saved_search][:id] rescue nil
+          Scrolls::Log.context[:saved_search_id] = saved_search_id = payload[:saved_search][:id] rescue nil
 
           Metriks.timer("papertrail_services.#{svc.hook_name}").time do
             if svc.receive(:logs, settings, payload)
@@ -64,7 +66,7 @@ module PapertrailServices
           Metriks.meter("papertrail_services.#{svc.hook_name}.error.email").mark
 
           status 400
-          report_exception(e, :saved_search_id => payload[:saved_search][:id],
+          report_exception(e, :saved_search_id => saved_search_id,
             :addresses => settings[:addresses])
         rescue TimeoutError, ::PapertrailServices::Service::TimeoutError
           Metriks.meter("papertrail_services.#{svc.hook_name}.error").mark
@@ -74,7 +76,7 @@ module PapertrailServices
           'error'
         rescue Object => e
           Metriks.meter("papertrail_services.#{svc.hook_name}.error").mark
-          report_exception(e, :saved_search_id => payload[:saved_search][:id])
+          report_exception(e, :saved_search_id => saved_search_id)
           status 500
           'error'
         ensure
