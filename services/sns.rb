@@ -14,7 +14,7 @@ class Service::SNS < Service
     topic = sns.topics[settings[:aws_sns_topic_arn]]
 
     payload[:events].each do |event|
-      topic.publish(event)
+      topic.publish({ :default => event }.to_json)
     end
   end
 end
