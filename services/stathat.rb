@@ -21,19 +21,25 @@ class Service::Stathat < Service
       }
     end
 
-    resp = http_post "http://api.stathat.com/ez" do |req|
-      req.headers[:content_type] = 'application/json'
-      req.body = {
-        :ezkey => settings[:ezkey],
-        :data => data
-      }.to_json
-    end
+    # Submissions are limited to 1,000 datapoints, so we'll ensure we stay
+    # way under by submitting 500 at a time
+    data.each_slice(500) do |data_slice|
+      begin
+        resp = http_post "http://api.stathat.com/ez" do |req|
+          req.headers[:content_type] = 'application/json'
+          req.body = {
+            :ezkey => settings[:ezkey],
+            :data => data_slice
+          }.to_json
+        end
 
-    unless resp && resp.success?
-      puts "stathat: #{payload[:saved_search][:id]}: #{resp.status}: #{resp.body}"
-      raise_config_error "Could not submit metrics"
+        unless resp && resp.success?
+          Scrolls.log(:status => resp.status, :body => resp.body)
+          raise_config_error "Could not submit metrics"
+        end
+      rescue Faraday::Error::ConnectionFailed
+        raise_config_error "Connection refused"
+      end
     end
-  rescue Faraday::Error::ConnectionFailed
-    raise_config_error "Connection refused"
   end
 end
