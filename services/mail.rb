@@ -95,7 +95,7 @@ class Service::Mail < Service
 
   def text_email
     erb(unindent(<<-EOF), binding)
-      Here's the most recent events matching your "<%= payload[:saved_search][:name] %>" search:
+      Here are the most recent events matching your "<%= payload[:saved_search][:name] %>" search:
 
       <%- if !payload[:events].empty? -%>
         <%- payload[:events].each do |event| -%>
