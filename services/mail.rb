@@ -57,7 +57,7 @@ class Service::Mail < Service
           <div style="background:#fff;border:1px solid #ddd;padding:10px 20px;margin:0 30px;">
 
           <h3>
-            Here's the most recent events matching your "<a href="<%=h payload[:saved_search][:html_search_url] %>"><%= h payload[:saved_search][:name] %></a>" search:
+            Here are the most recent events matching your "<a href="<%=h payload[:saved_search][:html_search_url] %>"><%= h payload[:saved_search][:name] %></a>" search:
           </h3>
 
           <div style="font-family:monaco,monospace,courier,'courier new';padding:4px;font-size:11px;border:1px solid #f1f1f1;border-bottom:0;">
