@@ -41,15 +41,19 @@ class LibratoMetricsTest < PapertrailServices::TestCase
     now = Time.now.tv_sec
     max_real_offset = 3600 * 24
 
-    spayload = payload.dup
-    spayload[:events].each do |event|
-      time = Time.iso8601(event[:received_at])
-      time = time.to_i - (time.to_i % 60)
-      delta = now - time
-      event[:received_at] = Time.at(now - (delta % max_real_offset)).iso8601
+    shifted = counts_payload.dup
+    shifted[:counts].each do |count|
+      count[:timeseries] = count[:timeseries].
+        each_with_object({}) do |(time, count), timeseries|
+          time  = Time.iso8601(time)
+          time  = time.to_i - (time.to_i % 60)
+          delta = now - time
+          shifted_time = Time.at(now - (delta % max_real_offset)).iso8601
+          timeseries[shifted_time] = count
+        end
     end
 
-    spayload
+    shifted
   end
 
   def service(*args)

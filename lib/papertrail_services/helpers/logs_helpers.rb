@@ -23,6 +23,34 @@ module PapertrailServices
         }.with_indifferent_access
       end
 
+      def self.sample_counts_payload
+        {
+          "min_id"=>"31171139124469760", "max_id"=>"31181206313902080", "reached_record_limit"=>true,
+          "saved_search" => {
+            "name" => "cron",
+            "query" => "cron",
+            "id" => 392,
+            "html_edit_url" => "https://papertrailapp.com/searches/392/edit",
+            "html_search_url" => "https://papertrailapp.com/searches/392"
+          },
+          "counts"=>[
+            {"source_name"=>"alien",
+             "source_id"=>6,
+             "timeseries"=>{
+               "2011-07-22T14:10:01-07:00"=>1,
+               "2011-07-22T14:20:01-07:00"=>1,
+               "2011-07-22T14:30:01-07:00"=>1,
+               "2011-07-22T14:40:01-07:00"=>1,
+             }},
+            {"source_name"=>"lullaby",
+             "source_id"=>7,
+             "timeseries"=>{
+               "2011-07-22T14:10:01-07:00"=>1
+             }}
+          ]
+        }.with_indifferent_access
+      end
+
       def syslog_format(message)
         time = Time.zone.at(Time.iso8601(message[:received_at]))
 

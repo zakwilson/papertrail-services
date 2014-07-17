@@ -32,6 +32,10 @@ class PapertrailServices::TestCase < Test::Unit::TestCase
     PapertrailServices::Helpers::LogsHelpers.sample_payload
   end
 
+  def counts_payload
+    PapertrailServices::Helpers::LogsHelpers.sample_counts_payload
+  end
+
   def http_stubs
     @http_stubs ||= Faraday::Adapter::Test::Stubs.new
   end

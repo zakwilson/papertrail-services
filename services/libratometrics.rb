@@ -3,17 +3,12 @@ class Service::LibratoMetrics < Service
   def receive_logs
     name = settings[:name].gsub(/ +/, '_')
 
-    # values[hostname][time]
-    values = Hash.new do |h,k|
-      h[k] = Hash.new do |i,l|
-        i[l] = 0
-      end
-    end
-
-    payload[:events].each do |event|
-      time = Time.iso8601(event[:received_at]).to_i
-      time = time.to_i - (time.to_i % 60)
-      values[event[:source_name]][time] += 1
+    values = {}
+    payload[:counts].each do |count|
+      values[count[:source_name]] = count[:timeseries].
+        each_with_object({}) do |(time, count), timeseries|
+          timeseries[Time.iso8601(time).to_i] = count
+        end
     end
 
     client = Librato::Metrics::Client.new
