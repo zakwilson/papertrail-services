@@ -19,7 +19,7 @@ class PapertrailServices::TestCase < Test::Unit::TestCase
 
     service = klass.new(event, data, payload)
     service.http = Faraday.new do |b|
-      b.adapter :test, @stubs
+      b.adapter :test, http_stubs
     end
     service
   end
@@ -31,5 +31,8 @@ class PapertrailServices::TestCase < Test::Unit::TestCase
   def payload
     PapertrailServices::Helpers::LogsHelpers.sample_payload
   end
-end
 
+  def http_stubs
+    @http_stubs ||= Faraday::Adapter::Test::Stubs.new
+  end
+end

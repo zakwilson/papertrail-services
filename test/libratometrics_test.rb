@@ -1,16 +1,12 @@
 require File.expand_path('../helper', __FILE__)
 
 class LibratoMetricsTest < PapertrailServices::TestCase
-  def setup
-    @stubs = Faraday::Adapter::Test::Stubs.new
-  end
-
   def test_logs
     Librato::Metrics::Queue.any_instance.expects(:submit)
 
     svc = service(:logs, { :name => 'gauge', :user => 'a@b.com', :token => 'abc' }, shifted_payload)
 
-    @stubs.post '/v1/metrics.json' do |env|
+    http_stubs.post '/v1/metrics.json' do |env|
       [200, {}, '']
     end
 
