@@ -1,0 +1,8 @@
+language: ruby
+rvm:
+- 2.1.1
+- 1.9.3
+script: bundle exec rake test
+notifications:
+  webhooks:
+    secure: H6diy7FSUPYuQKv97rWBb6jllqhkTn5+br5+dYIHV6vjCHa6STxE6m70jWPI1GpCuqyEHe+GLmjOzl33SeVph+lFDAbyZCgFb5EESEhiUZfQds56vqv3CcJsvFZlEQY4dKswWP9o8QX7e1RHKZMrQhYQ9KlW+D7iIFOM0s06Xl4=
