@@ -11,7 +11,7 @@ class Service::LibratoMetrics < Service
         metrics[event[:source_name]][rounded] += 1
       end
 
-    submit_metrics metrics 
+    submit_metrics metrics
   end
 
   def receive_counts

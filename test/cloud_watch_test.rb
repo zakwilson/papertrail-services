@@ -1,21 +1,21 @@
 require File.expand_path('../helper', __FILE__)
 
 class CloudWatchTest < PapertrailServices::TestCase
-  class MockAcwInterface      
+  class MockAcwInterface
     def put_metric_data(options)
       options[:data_points] ? true : false
-    end    
+    end
   end
-  
+
   def setup
     @common_settings = { :aws_access_key_id => '123', :aws_secret_access_key => '456' }
   end
 
   def test_logs
-    svc = service(:logs, 
-      metric_regex_params(3, :dimension => 'Region=West;Element=page').merge(@common_settings), 
+    svc = service(:logs,
+      metric_regex_params(3, :dimension => 'Region=West;Element=page').merge(@common_settings),
       payload)
-    
+
     svc.aws_connection.build do |b|
       b.adapter :test do |stub|
         stub.post('/') { [ 200, nil, '' ]}
@@ -28,7 +28,7 @@ class CloudWatchTest < PapertrailServices::TestCase
   def service(*args)
     super Service::CloudWatch, *args
   end
-  
+
   def metric_regex_params(count, metric_options = { :regex => 'abc' })
     metrics = {}
     count.times.map do |i|

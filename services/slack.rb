@@ -3,7 +3,7 @@ class Service::Slack < Service
   def receive_logs
     raise_config_error 'Missing slack webhook' if settings[:slack_url].to_s.empty?
     raise_config_error "Slack webhook must point to slack.com" unless settings[:slack_url].to_s.match(/slack\.com/)
-    
+
     message = %{"#{payload[:saved_search][:name]}" search found #{pluralize(payload[:events].length, 'match')} — <#{payload[:saved_search][:html_search_url]}|#{payload[:saved_search][:html_search_url]}>}
     attachment = format_content(payload[:events])
 
@@ -17,7 +17,7 @@ class Service::Slack < Service
         }
       ]
     }
-    
+
     http.headers['content-type'] = 'application/json'
     response = http_post settings[:slack_url], data.to_json
 
