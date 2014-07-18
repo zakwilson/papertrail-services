@@ -45,7 +45,7 @@ module PapertrailServices
             {"source_name"=>"lullaby",
              "source_id"=>7,
              "timeseries"=>{
-               "2011-07-22T14:10:01-07:00"=>1
+               "2011-07-22T14:50:01-07:00"=>1
              }}
           ]
         }.with_indifferent_access

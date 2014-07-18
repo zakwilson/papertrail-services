@@ -1,68 +1,67 @@
 require File.expand_path('../helper', __FILE__)
 
 class LibratoMetricsTest < PapertrailServices::TestCase
-  def test_logs
+  def test_submits_logs_metrics
+    expected_metrics = { 'alien'   => { 1311369000 => 2,
+                                        1311370200 => 1,
+                                        1311370800 => 1 },
+                         'lullaby' => { 1311371400 => 1 }}
+    Service::LibratoMetrics::MetricsQueue.expects(:submit_metrics)
+      .with(expected_metrics, service_settings)
+
+    service(:logs, service_settings, payload).receive_logs
+  end
+
+  def test_submits_counts_metrics
+    expected_metrics = { 'alien'   => { 1311369000 => 2,
+                                        1311370200 => 1,
+                                        1311370800 => 1 },
+                         'lullaby' => { 1311371400 => 1 }}
+    Service::LibratoMetrics::MetricsQueue.expects(:submit_metrics)
+      .with(expected_metrics, service_settings)
+
+    service(:logs, service_settings, counts_payload).receive_counts
+  end
+
+  def test_submitting_metrics
     Librato::Metrics::Queue.any_instance.expects(:submit)
 
-    svc = service(:logs, { :name => 'gauge', :user => 'a@b.com', :token => 'abc' }, shifted_logs_payload)
-
-    http_stubs.post '/v1/metrics.json' do |env|
-      [200, {}, '']
-    end
-
-    svc.receive_logs
+    metrics = { 'alien' => { Time.now.to_i => 2 }}
+    Service::LibratoMetrics::MetricsQueue.
+      submit_metrics(metrics, service_settings)
   end
 
-  def test_logs_unauthorized
-    Librato::Metrics::Queue.any_instance.expects(:submit).raises(Librato::Metrics::Unauthorized.new('unauthorized'))
-
-    svc = service(:logs, { :name => 'gauge', :user => 'a@b.com', :token => 'abc' }, shifted_logs_payload)
-
-    assert_raise Service::ConfigurationError do
-      svc.receive_logs
-    end
-  end
-
-  def test_logs_error
-    Librato::Metrics::Queue.any_instance.expects(:submit).raises(Librato::Metrics::MetricsError)
-
-    svc = service(:logs, { :name => 'gauge', :user => 'a@b.com', :token => 'abc' }, shifted_logs_payload)
-
-    assert_raise Service::ConfigurationError do
-      svc.receive_logs
-    end
-  end
-
-  def test_counts
+  def test_submitting_metrics_unauthorized
     Librato::Metrics::Queue.any_instance.expects(:submit)
-
-    svc = service(:logs, { :name => 'gauge', :user => 'a@b.com', :token => 'abc' }, shifted_counts_payload)
-
-    http_stubs.post '/v1/metrics.json' do |env|
-      [200, {}, '']
-    end
-
-    svc.receive_counts
-  end
-
-  def test_counts_unauthorized
-    Librato::Metrics::Queue.any_instance.expects(:submit).raises(Librato::Metrics::Unauthorized.new('unauthorized'))
-
-    svc = service(:logs, { :name => 'gauge', :user => 'a@b.com', :token => 'abc' }, shifted_counts_payload)
+      .raises(Librato::Metrics::Unauthorized.new('unauthorized'))
 
     assert_raise Service::ConfigurationError do
-      svc.receive_counts
+      metrics = { 'alien' => { Time.now.to_i => 2 }}
+      Service::LibratoMetrics::MetricsQueue.
+        submit_metrics(metrics, service_settings)
     end
   end
 
-  def test_counts_error
-    Librato::Metrics::Queue.any_instance.expects(:submit).raises(Librato::Metrics::MetricsError)
-
-    svc = service(:logs, { :name => 'gauge', :user => 'a@b.com', :token => 'abc' }, shifted_counts_payload)
+  def test_submitting_metrics_error
+    Librato::Metrics::Queue.any_instance.expects(:submit)
+      .raises(Librato::Metrics::MetricsError)
 
     assert_raise Service::ConfigurationError do
-      svc.receive_counts
+      metrics = { 'alien' => { Time.now.to_i => 2 }}
+      Service::LibratoMetrics::MetricsQueue.
+        submit_metrics(metrics, service_settings)
     end
+  end
+
+
+  def service(*args)
+    super Service::LibratoMetrics, *args
+  end
+
+  def service_settings
+    { :name  => 'gauge',
+      :user  => 'arthur@dent.com',
+      :token => 'towel' }
   end
 
   # Shift time stamps to within the acceptable offset from
@@ -96,9 +95,5 @@ class LibratoMetricsTest < PapertrailServices::TestCase
     end
 
     shifted
-  end
-
-  def service(*args)
-    super Service::LibratoMetrics, *args
   end
 end
