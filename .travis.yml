@@ -3,4 +3,4 @@ rvm: 1.9.3
 script: bundle exec rake test
 notifications:
   webhooks:
-    secure: H6diy7FSUPYuQKv97rWBb6jllqhkTn5+br5+dYIHV6vjCHa6STxE6m70jWPI1GpCuqyEHe+GLmjOzl33SeVph+lFDAbyZCgFb5EESEhiUZfQds56vqv3CcJsvFZlEQY4dKswWP9o8QX7e1RHKZMrQhYQ9KlW+D7iIFOM0s06Xl4=
+    secure: NtoqTvhJXIZ+mspMlEBjOwIRm0IL82+UmPZeYSMlu7077//zyVLt1ObTb77aLYMuCvdX9pdyN+r1iElkrqBCH8F+LGwOlywvRTxNdSxLB2z4bH6LdRT54pYCVuSWDuPPqnG0pTXSFf25C8c29tp1FsPBIialkpUwkp2yIZ9jK/o=
