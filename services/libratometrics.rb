@@ -1,32 +1,39 @@
 # encoding: utf-8
 class Service::LibratoMetrics < Service
   def receive_logs
-    # metrics[hostname][time]
-    metrics = Hash.new do |h,k|
-      h[k] = Hash.new do |i,l|
-        i[l] = 0
-      end
+    default_metrics = Hash.new do |metrics, name|
+      metrics[name] = default_timeseries
     end
 
-    payload[:events].each do |event|
-      time = Time.iso8601(event[:received_at]).to_i
-      time = time.to_i - (time.to_i % 60)
-      metrics[event[:source_name]][time] += 1
+    metrics = payload[:events].
+      each_with_object(default_metrics) do |event, metrics|
+        rounded = round_to_minute(event[:received_at])
+        metrics[event[:source_name]][rounded] += 1
+      end
+
+    submit_metrics metrics 
+  end
+
+  def receive_counts
+    metrics = payload[:counts].each_with_object({}) do |count, metrics|
+      metrics[count[:source_name]] = count[:timeseries].
+        each_with_object(default_timeseries) do |(time, count), timeseries|
+          timeseries[round_to_minute(time)] += count
+        end
     end
 
     submit_metrics metrics
   end
 
-  def receive_counts
-    metrics = {}
-    payload[:counts].each do |count|
-      metrics[count[:source_name]] = count[:timeseries].
-        each_with_object({}) do |(time, count), timeseries|
-          timeseries[Time.iso8601(time).to_i] = count
-        end
+  def default_timeseries
+    Hash.new do |timeseries, time|
+      timeseries[time] = 0
     end
+  end
 
-    submit_metrics metrics
+  def round_to_minute(time)
+    time = Time.iso8601(time).to_i
+    time - (time % 60)
   end
 
   def submit_metrics(metrics)

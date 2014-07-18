@@ -70,8 +70,7 @@ class LibratoMetricsTest < PapertrailServices::TestCase
   # whenever possible (except when a factor of the max offset).
   def shifted_time(time, now)
     max_real_offset = 3600 * 24
-    shifted_time    = Time.iso8601(time)
-    shifted_time    = shifted_time.to_i - (shifted_time.to_i % 60)
+    shifted_time    = Time.iso8601(time).to_i
     delta           = now - shifted_time
     Time.at(now - (delta % max_real_offset)).iso8601
   end
