@@ -11,7 +11,7 @@ class Service::LibratoMetrics < Service
         metrics[event[:source_name]][rounded] += 1
       end
 
-    MetricsQueue.submit_metrics metrics, settings
+    submit_metrics metrics
   end
 
   def receive_counts
@@ -22,7 +22,7 @@ class Service::LibratoMetrics < Service
         end
     end
 
-    MetricsQueue.submit_metrics metrics, settings
+    submit_metrics metrics
   end
 
   def default_timeseries
@@ -36,40 +36,55 @@ class Service::LibratoMetrics < Service
     time - (time % 60)
   end
 
-  class MetricsQueue
-    def self.submit_metrics(metrics, settings)
-      name   = settings[:name].gsub(/ +/, '_')
-      client = Librato::Metrics::Client.new
-      client.authenticate(settings[:user].to_s.strip, settings[:token].to_s.strip)
-      client.agent_identifier("Papertrail-Services/1.0")
+  def metric_name
+    settings[:name].gsub(/ +/, '_')
+  end
 
-      queue = client.new_queue
+  def librato_user
+    settings[:user].to_s.strip
+  end
 
-      metrics.each do |source_name, hash|
-        hash.each do |time, count|
-          queue.add name => {
-            :source       => source_name,
-            :value        => count,
-            :measure_time => time,
-            :type         => 'gauge'
-          }
-        end
-      end
+  def librato_token
+    settings[:token].to_s.strip
+  end
 
-      unless queue.empty?
-        queue.submit
-      end
-    rescue Librato::Metrics::ClientError => e
-      if e.message !~ /is too far in the past/
-        raise Service::ConfigurationError,
-          "Error sending to Librato Metrics: #{e.message}"
-      end
-    rescue Librato::Metrics::CredentialsMissing, Librato::Metrics::Unauthorized
-      raise Service::ConfigurationError,
-        "Error sending to Librato Metrics: Invalid email address or token"
-    rescue Librato::Metrics::MetricsError => e
+  def submit_metrics(metrics)
+    queue = enqueue_metrics(metrics, metric_name, librato_user, librato_token)
+    return if queue.empty?
+    queue.submit
+  rescue Librato::Metrics::ClientError => e
+    if e.message !~ /is too far in the past/
       raise Service::ConfigurationError,
         "Error sending to Librato Metrics: #{e.message}"
     end
+  rescue Librato::Metrics::CredentialsMissing, Librato::Metrics::Unauthorized
+    raise Service::ConfigurationError,
+      "Error sending to Librato Metrics: Invalid email address or token"
+  rescue Librato::Metrics::MetricsError => e
+    raise Service::ConfigurationError,
+      "Error sending to Librato Metrics: #{e.message}"
+  end
+
+  def enqueue_metrics(metrics, name, user, token)
+    queue = create_queue(user, token)
+    metrics.each do |source_name, hash|
+      hash.each do |time, count|
+        queue.add name => {
+          :source       => source_name,
+          :value        => count,
+          :measure_time => time,
+          :type         => 'gauge'
+        }
+      end
+    end
+
+    queue
+  end
+
+  def create_queue(user, token)
+    client = Librato::Metrics::Client.new
+    client.authenticate(user, token)
+    client.agent_identifier("Papertrail-Services/1.0")
+    client.new_queue
   end
 end
