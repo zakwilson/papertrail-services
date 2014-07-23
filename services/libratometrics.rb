@@ -7,7 +7,8 @@ class Service::LibratoMetrics < Service
 
     metrics = payload[:events].
       each_with_object(default_metrics) do |event, metrics|
-        rounded = round_to_minute(event[:received_at])
+        received_at = Time.iso8601(event[:received_at]).to_i
+        rounded     = round_to_minute(received_at)
         metrics[event[:source_name]][rounded] += 1
       end
 
@@ -32,7 +33,6 @@ class Service::LibratoMetrics < Service
   end
 
   def round_to_minute(time)
-    time = Time.iso8601(time).to_i
     time - (time % 60)
   end
 
