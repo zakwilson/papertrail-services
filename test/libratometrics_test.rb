@@ -99,37 +99,4 @@ class LibratoMetricsTest < PapertrailServices::TestCase
       :user  => 'arthur@dent.com',
       :token => 'towel' }
   end
-
-  # Shift time stamps to within the acceptable offset from
-  # real time. This should try to keep the uniqueness of times
-  # whenever possible (except when a factor of the max offset).
-  def shifted_time(time, now)
-    max_real_offset = 3600 * 24
-    shifted_time    = Time.iso8601(time).to_i
-    delta           = now - shifted_time
-    Time.at(now - (delta % max_real_offset)).iso8601
-  end
-
-  def shifted_logs_payload
-    now     = Time.now.tv_sec
-    shifted = payload.dup
-    shifted[:events].each do |event|
-      event[:received_at] = shifted_time(event[:received_at], now)
-    end
-
-    shifted
-  end
-
-  def shifted_counts_payload
-    now     = Time.now.tv_sec
-    shifted = counts_payload.dup
-    shifted[:counts].each do |count|
-      count[:timeseries] = count[:timeseries].
-        each_with_object({}) do |(time, count), timeseries|
-          timeseries[shifted_time(time, now)] = count
-        end
-    end
-
-    shifted
-  end
 end
