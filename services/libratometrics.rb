@@ -19,6 +19,7 @@ class Service::LibratoMetrics < Service
     metrics = payload[:counts].each_with_object({}) do |count, metrics|
       metrics[count[:source_name]] = count[:timeseries].
         each_with_object(default_timeseries) do |(time, count), timeseries|
+          time = time.to_i
           timeseries[round_to_minute(time)] += count
         end
     end

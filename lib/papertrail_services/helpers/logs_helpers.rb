@@ -37,15 +37,15 @@ module PapertrailServices
             {"source_name"=>"alien",
              "source_id"=>6,
              "timeseries"=>{
-               1311369001=>1,
-               1311369010=>1,
-               1311370201=>1,
-               1311370801=>1,
+               "1311369001"=>1,
+               "1311369010"=>1,
+               "1311370201"=>1,
+               "1311370801"=>1,
              }},
             {"source_name"=>"lullaby",
              "source_id"=>7,
              "timeseries"=>{
-               1311371401=>1
+               "1311371401"=>1
              }}
           ]
         }.with_indifferent_access
