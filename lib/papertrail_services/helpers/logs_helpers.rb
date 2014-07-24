@@ -74,5 +74,9 @@ module PapertrailServices
         "#{count || 0} " + ((count == 1 || count =~ /^1(\.0+)?$/) ? singular : (plural || singular.pluralize))
       end
     end
+
+    module CountsHelpers
+      include LogsHelpers
+    end
   end
 end
