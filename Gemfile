@@ -46,7 +46,7 @@ group :production do
 
   # Use unicorn as the web server
   gem 'unicorn'
-  
+
   gem 'puma'
 end
 

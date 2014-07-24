@@ -20,7 +20,7 @@ class Service::GeckoBoard < Service
         :api_key => token,
         :data => {
           :item => [
-            { 
+            {
               :text => "",
               :value => value
             }

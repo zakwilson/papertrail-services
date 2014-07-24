@@ -49,7 +49,7 @@ class Service::Pagerduty < Service
       resp = http_post "https://events.pagerduty.com/generic/2010-04-15/create_event.json", body.to_json
       unless resp.success?
         error_body = Yajl::Parser.parse(resp.body) rescue nil
-        
+
         if error_body
           raise_config_error("Unable to send: #{error_body['errors'].join(", ")}")
         else

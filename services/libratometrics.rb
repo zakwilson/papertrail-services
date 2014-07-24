@@ -1,28 +1,74 @@
 # encoding: utf-8
 class Service::LibratoMetrics < Service
   def receive_logs
-    name = settings[:name].gsub(/ +/, '_')
+    default_metrics = Hash.new do |metrics, name|
+      metrics[name] = default_timeseries
+    end
 
-    # values[hostname][time]
-    values = Hash.new do |h,k|
-      h[k] = Hash.new do |i,l|
-        i[l] = 0
+    metrics = payload[:events].
+      each_with_object(default_metrics) do |event, metrics|
+        received_at = Time.iso8601(event[:received_at]).to_i
+        rounded     = round_to_minute(received_at)
+        metrics[event[:source_name]][rounded] += 1
       end
+
+    submit_metrics metrics
+  end
+
+  def receive_counts
+    metrics = payload[:counts].each_with_object({}) do |count, metrics|
+      metrics[count[:source_name]] = count[:timeseries].
+        each_with_object(default_timeseries) do |(time, count), timeseries|
+          time = time.to_i
+          timeseries[round_to_minute(time)] += count
+        end
     end
 
-    payload[:events].each do |event|
-      time = Time.iso8601(event[:received_at]).to_i
-      time = time.to_i - (time.to_i % 60)
-      values[event[:source_name]][time] += 1
+    submit_metrics metrics
+  end
+
+  def default_timeseries
+    Hash.new do |timeseries, time|
+      timeseries[time] = 0
     end
+  end
 
-    client = Librato::Metrics::Client.new
-    client.authenticate(settings[:user].to_s.strip, settings[:token].to_s.strip)
-    client.agent_identifier("Papertrail-Services/1.0")
+  def round_to_minute(time)
+    time - (time % 60)
+  end
 
-    queue = client.new_queue
+  def metric_name
+    settings[:name].gsub(/ +/, '_')
+  end
 
-    values.each do |source_name, hash|
+  def librato_user
+    settings[:user].to_s.strip
+  end
+
+  def librato_token
+    settings[:token].to_s.strip
+  end
+
+  def submit_metrics(metrics)
+    queue = enqueue_metrics(metrics, metric_name, librato_user, librato_token)
+    return if queue.empty?
+    queue.submit
+  rescue Librato::Metrics::ClientError => e
+    if e.message !~ /is too far in the past/
+      raise Service::ConfigurationError,
+        "Error sending to Librato Metrics: #{e.message}"
+    end
+  rescue Librato::Metrics::CredentialsMissing, Librato::Metrics::Unauthorized
+    raise Service::ConfigurationError,
+      "Error sending to Librato Metrics: Invalid email address or token"
+  rescue Librato::Metrics::MetricsError => e
+    raise Service::ConfigurationError,
+      "Error sending to Librato Metrics: #{e.message}"
+  end
+
+  def enqueue_metrics(metrics, name, user, token)
+    queue = create_queue(user, token)
+    metrics.each do |source_name, hash|
       hash.each do |time, count|
         queue.add name => {
           :source       => source_name,
@@ -33,16 +79,13 @@ class Service::LibratoMetrics < Service
       end
     end
 
-    unless queue.empty?
-      queue.submit
-    end
-  rescue Librato::Metrics::ClientError => e
-    if e.message !~ /is too far in the past/
-      raise_config_error("Error sending to Librato Metrics: #{e.message}")
-    end
-  rescue Librato::Metrics::CredentialsMissing, Librato::Metrics::Unauthorized
-    raise_config_error("Error sending to Librato Metrics: Invalid email address or token")
-  rescue Librato::Metrics::MetricsError => e
-    raise_config_error("Error sending to Librato Metrics: #{e.message}")
+    queue
+  end
+
+  def create_queue(user, token)
+    client = Librato::Metrics::Client.new
+    client.authenticate(user, token)
+    client.agent_identifier("Papertrail-Services/1.0")
+    client.new_queue
   end
 end

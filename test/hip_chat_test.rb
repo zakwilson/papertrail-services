@@ -27,7 +27,7 @@ class HipChatTest < PapertrailServices::TestCase
 
     expected =<<-'EOF'.lines.map(&:lstrip).join
       Jul 22 14:10:01 alien CROND: (root) CMD (/usr/lib/sa/sa1 -S DISK 1 1)
-      Jul 22 14:20:01 alien CROND: (root) CMD (/usr/lib/sa/sa1 -S DISK 1 1)
+      Jul 22 14:10:10 alien CROND: (root) CMD (/usr/lib/sa/sa1 -S DISK 1 1)
       Jul 22 14:30:01 alien CROND: (root) CMD (/usr/lib/sa/sa1 -S DISK 1 1)
       Jul 22 14:40:01 alien CROND: (root) CMD (/usr/lib/sa/sa1 -S DISK 1 1)
       Jul 22 14:50:01 lullaby CROND: (root) CMD (/usr/lib/sa/sa1 -S DISK 1 1)
