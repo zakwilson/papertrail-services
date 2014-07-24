@@ -46,7 +46,7 @@ module PapertrailServices
           Scrolls::Log.context[:saved_search_id] = saved_search_id = payload[:saved_search][:id] rescue nil
 
           Metriks.timer("papertrail_services.#{svc.hook_name}").time do
-            if svc.receive(:logs, settings, payload)
+            if svc.receive(params[:event], settings, payload)
               status 200
               ''
             else
