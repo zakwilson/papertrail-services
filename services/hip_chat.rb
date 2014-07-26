@@ -6,12 +6,14 @@ class Service::HipChat < Service
   attr_writer :hipchat
 
   MESSAGE_LIMIT = 5000 - ("<pre>\n"+'</pre>').size
+  COLORS = %w{yellow red green purple gray random}
 
   def receive_logs
     raise_config_error 'Missing hipchat token' if settings[:token].to_s.empty?
     raise_config_error 'Missing hipchat room_id' if settings[:room_id].to_s.empty?
 
     dont_display_messages = settings[:dont_display_messages].to_i == 1
+    settings[:color] = 'yellow' unless COLORS.include? settings[:color].to_s
 
     events      = payload[:events]
     search_name = payload[:saved_search][:name]
@@ -45,7 +47,7 @@ class Service::HipChat < Service
   end
 
   def deliver(message)
-    res = hipchat.rooms_message(settings[:room_id], 'Papertrail', message, settings[:notify])
+    res = hipchat.rooms_message(settings[:room_id], 'Papertrail', message, settings[:notify], settings[:color])
     unless res.code == 200
       message = res.parsed_response['error']['message'] rescue "Responded with HTTP #{res.code}"
       raise message
