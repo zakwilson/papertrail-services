@@ -33,19 +33,19 @@ class Service::HipChat < Service
         if remaining > 0
           logs << new_entry
         else
-          deliver_preformatted(logs.join)
+          deliver_preformatted(logs.join, color)
           logs, remaining = [new_entry], MESSAGE_LIMIT
         end
       end
 
-      deliver_preformatted(logs.join)
+      deliver_preformatted(logs.join, color)
     end
   rescue
     raise_config_error "Error sending hipchat message: #{$!}"
   end
 
-  def deliver_preformatted(message)
-    deliver "<pre>\n" + message + '</pre>'
+  def deliver_preformatted(message, color)
+    deliver "<pre>\n" + message + '</pre>', color
   end
 
   def deliver(message, color)
