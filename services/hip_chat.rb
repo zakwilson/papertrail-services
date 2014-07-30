@@ -13,15 +13,17 @@ class Service::HipChat < Service
     raise_config_error 'Missing hipchat room_id' if settings[:room_id].to_s.empty?
 
     dont_display_messages = settings[:dont_display_messages].to_i == 1
-    settings[:color] = 'yellow' unless COLORS.include? settings[:color].to_s
+    color                 = settings[:color].to_s.downcase
 
     events      = payload[:events]
     search_name = payload[:saved_search][:name]
     search_url  = payload[:saved_search][:html_search_url]
 
+    color = 'yellow' unless COLORS.include?(color)
+
     matches = pluralize(events.size, 'match')
 
-    deliver %{"#{search_name}" search found #{matches} — <a href="#{search_url}">#{search_url}</a>}
+    deliver %{"#{search_name}" search found #{matches} — <a href="#{search_url}">#{search_url}</a>}, color
 
     if !events.empty? && !dont_display_messages
       logs, remaining = [], MESSAGE_LIMIT
@@ -46,8 +48,8 @@ class Service::HipChat < Service
     deliver "<pre>\n" + message + '</pre>'
   end
 
-  def deliver(message)
-    res = hipchat.rooms_message(settings[:room_id], 'Papertrail', message, settings[:notify], settings[:color])
+  def deliver(message, color)
+    res = hipchat.rooms_message(settings[:room_id], 'Papertrail', message, settings[:notify], color)
     unless res.code == 200
       message = res.parsed_response['error']['message'] rescue "Responded with HTTP #{res.code}"
       raise message
