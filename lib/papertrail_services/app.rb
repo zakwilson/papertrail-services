@@ -35,7 +35,8 @@ module PapertrailServices
 
     def self.service(svc)
       post "/#{svc.hook_name}/:event" do
-        Scrolls::Log.context[:service] = svc.hook_name
+        Scrolls::Log.context[:service]    = svc.hook_name
+        Scrolls::Log.context[:request_id] = request['X_REQUEST_ID']
 
         saved_search_id = nil
 
