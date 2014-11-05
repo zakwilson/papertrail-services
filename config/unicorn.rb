@@ -1,6 +1,6 @@
 worker_processes Integer(ENV["UNICORN_WORKERS"] || 3) # amount of unicorn workers to spin up
 
-timeout 45 # restarts workers that hang for 30 seconds
+timeout 60 # restarts workers that hang for 60 seconds
 
 preload_app true
 
