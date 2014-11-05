@@ -36,10 +36,16 @@ class Service::Mail < Service
   end
 
   def html_syslog_format(message, html_search_url)
-    received_at = Time.zone.parse(message[:received_at])
-    url = html_search_url + '?' + { :time => received_at.to_i }.to_query
+    received_at = Time.zone.at(Time.iso8601(message[:received_at]))
+    s = ''
 
-    s = "<a href=\"#{url}\" style=\"color:#444;\">#{received_at.strftime('%b %d %X')}</a>"
+    if html_search_url
+      url = html_search_url + '?' + { :time => received_at.to_i }.to_query
+      s << "<a href=\"#{url}\" style=\"color:#444;\">#{received_at.strftime('%b %d %X')}</a>"
+    else
+      s << received_at.strftime('%b %d %X')
+    end
+
     s << " #{h(message[:source_name])} #{h(message[:program])}: #{h(message[:message])}"
   end
 
