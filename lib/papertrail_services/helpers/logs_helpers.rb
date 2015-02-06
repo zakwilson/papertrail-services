@@ -78,6 +78,10 @@ module PapertrailServices
 
         text + ((count == 1 || count =~ /^1(\.0+)?$/) ? singular : (plural || singular.pluralize))
       end
+
+      def pluralize_without_count(count, singular, plural = nil)
+        pluralize(count, singular, plural, :include_count => false)
+      end
     end
 
     module CountsHelpers
