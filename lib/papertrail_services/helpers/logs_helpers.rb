@@ -70,8 +70,13 @@ module PapertrailServices
         string.strip.gsub(/^#{indentation}/, "") + "\n"
       end
 
-      def pluralize(count, singular, plural = nil)
-        "#{count || 0} " + ((count == 1 || count =~ /^1(\.0+)?$/) ? singular : (plural || singular.pluralize))
+      def pluralize(count, singular, plural = nil, options = {})
+        text = ""
+        unless options[:include_count] == false
+          text += "#{count || 0} "
+        end
+
+        text + ((count == 1 || count =~ /^1(\.0+)?$/) ? singular : (plural || singular.pluralize))
       end
     end
 

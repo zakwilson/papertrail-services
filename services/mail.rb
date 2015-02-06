@@ -15,7 +15,7 @@ class Service::Mail < Service
       recipients = settings[:addresses].split(/(?:,|\s)+/).map { |a| a.strip }
       mail.to      recipients
       mail['reply-to'] = recipients.join(', ')
-      mail.subject %{[Papertrail] "#{payload[:saved_search][:name]}" search: #{pluralize(payload[:events].length, 'match')}}
+      mail.subject %{[Papertrail] "#{payload[:saved_search][:name]}" alert (at <%= alert_time %>)}
 
       text = text_email
       html = html_email
@@ -49,6 +49,14 @@ class Service::Mail < Service
     s << " #{h(message[:source_name])} #{h(message[:program])}: #{h(message[:message])}"
   end
 
+  def alert_time
+    Time.zone.now.strftime('%F %X')
+  end
+
+  def event_count
+    payload[:events].length
+  end
+
   def html_email
     erb(unindent(<<-EOF), binding)
       <html>
@@ -62,8 +70,10 @@ class Service::Mail < Service
           </div>
           <div style="background:#fff;border:1px solid #ddd;padding:10px 20px;margin:0 30px;">
 
-          <h3>
-            Here are the most recent events matching your "<a href="<%=h payload[:saved_search][:html_search_url] %>"><%= h payload[:saved_search][:name] %></a>" search:
+          <h3 style="font-weight: normal;">
+            Here <%= pluralize(event_count, 'is', 'are', :include_count => false) %> the
+            <strong><%= pluralize(event_count, 'recent event') %></strong>
+            matching your <a href="<%=h payload[:saved_search][:html_search_url] %>"><%= h payload[:saved_search][:name] %></a> search.
           </h3>
 
           <div style="font-family:monaco,monospace,courier,'courier new';padding:4px;font-size:11px;border:1px solid #f1f1f1;border-bottom:0;">
@@ -101,7 +111,8 @@ class Service::Mail < Service
 
   def text_email
     erb(unindent(<<-EOF), binding)
-      Here are the most recent events matching your "<%= payload[:saved_search][:name] %>" search:
+
+      Here <%= pluralize(event_count, 'is', 'are', :include_count => false) %> the <%= pluralize(event_count, 'recent event') %> matching your "<%= payload[:saved_search][:name] %>" search:
 
       <%- if !payload[:events].empty? -%>
         <%- payload[:events].each do |event| -%>
