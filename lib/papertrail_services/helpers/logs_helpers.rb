@@ -69,10 +69,6 @@ module PapertrailServices
         indentation = string[/\A\s*/]
         string.strip.gsub(/^#{indentation}/, "") + "\n"
       end
-
-      def pluralize(singular, options = {})
-        Pluralize.new(singular, options).to_s
-      end
     end
 
     module CountsHelpers

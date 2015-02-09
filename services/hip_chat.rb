@@ -21,7 +21,7 @@ class Service::HipChat < Service
 
     color = 'yellow' unless COLORS.include?(color)
 
-    matches = pluralize('match', :count => events.size)
+    matches = Pluralize.new('match', :count => events.size)
 
     deliver %{"#{search_name}" search found #{matches} — <a href="#{search_url}">#{search_url}</a>}, color
 
