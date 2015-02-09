@@ -15,7 +15,7 @@ class Service::Mail < Service
       recipients = settings[:addresses].split(/(?:,|\s)+/).map { |a| a.strip }
       mail.to      recipients
       mail['reply-to'] = recipients.join(', ')
-      mail.subject %{[Papertrail] "#{payload[:saved_search][:name]}" alert, #{Pluralize.new('match', :count => payload[:events].length)} (at <%= alert_time %>)}
+      mail.subject %{[Papertrail] "#{payload[:saved_search][:name]}" alert, #{Pluralize.new('match', :count => payload[:events].length)} (at #{alert_time})}
 
       text = text_email
       html = html_email
