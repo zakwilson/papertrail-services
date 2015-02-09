@@ -70,17 +70,8 @@ module PapertrailServices
         string.strip.gsub(/^#{indentation}/, "") + "\n"
       end
 
-      def pluralize(count, singular, plural = nil, options = {})
-        text = ""
-        unless options[:include_count] == false
-          text += "#{count || 0} "
-        end
-
-        text + ((count == 1 || count =~ /^1(\.0+)?$/) ? singular : (plural || singular.pluralize))
-      end
-
-      def pluralize_without_count(count, singular, plural = nil)
-        pluralize(count, singular, plural, :include_count => false)
+      def pluralize(singular, options = {})
+        Pluralize.new(singular, options).to_s
       end
     end
 
