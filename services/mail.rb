@@ -50,7 +50,7 @@ class Service::Mail < Service
   end
 
   def alert_time
-    Time.zone.now.strftime('%F %X')
+    Time.zone.now.strftime('%F %R')
   end
 
   def event_count
