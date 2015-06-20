@@ -135,7 +135,7 @@ class Service::Mail < Service
       Can we help?
       support@papertrailapp.com - http://help.papertrailapp.com/
 
-      Papertrail Inc, 1425 Broadway #20-4242, Seattle WA 98122 US
+      Papertrail Inc., 7171 Southwest Parkway, Austin, TX 78735 USA
     EOF
   end
 end
