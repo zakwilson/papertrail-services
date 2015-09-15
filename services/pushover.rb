@@ -15,6 +15,8 @@ class Service::Pushover < Service
       item[:message]
     }.join("\n")
 
+    message = message[0..1020] + "..." if message.length > 1024
+
     if message.empty?
       raise_config_error "Could not process payload"
     end
