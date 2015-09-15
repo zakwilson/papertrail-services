@@ -63,12 +63,23 @@ class Service::Mail < Service
         <head>
           <title>Papertrail</title>
           <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        </head>
-        <body style="margin:0;background:#f1f1f1;font-family:'Helvetica Neue', helvetica, arial, sans-serif;padding-bottom:30px;">
-          <div style="padding:10px 30px;background:#00488F;border-bottom:3px solid #fff;margin:0 0 20px 0;">
-            <img src="http://papertrailapp.com/images/papertrail-transparent-white-tiny.png" alt="" />
+          <style type="text/css">
+            @media only screen and (max-device-width: 480px) { 
+              .body {
+                padding: 0 10px 5px 10px !important;
+              }
+
+              .hdr {
+                padding: 10px !important;
+              }
+            }
+          </style>
+        </head>  
+        <body style="margin:0;padding:0;background:#fff;font-family:'Helvetica Neue', helvetica, arial, sans-serif;padding-bottom:30px;">
+          <div class="hdr" style="padding:10px 20px;background:#00488F;margin:0;">
+            <img src="http://papertrailapp.com/images/papertrail-transparent-white-278x62.png" width="139" alt="" />
           </div>
-          <div style="background:#fff;border:1px solid #ddd;padding:10px 20px;margin:0 30px;">
+          <div class="body" style="padding:15px 20px;">
 
           <h3 style="font-weight: normal;">
             Here <%= Pluralize.new('is', :plural => 'are', :count => event_count, :omit_count => true) %> the
