@@ -3,6 +3,7 @@
 require 'rushover'
 
 class Service::Pushover < Service
+  attr_writer :pushover
 
   def receive_logs
     raise_config_error 'Missing pushover app token' if
@@ -17,19 +18,21 @@ class Service::Pushover < Service
     if message.empty?
       raise_config_error "Could not process payload"
     end
-                                       
-    client = Rushover::Client.new(settings[:pushover_app_token])
 
-    resp = client.notify(settings[:pushover_user_token],
-                         message,
-                         {title: payload[:saved_search][:name]})
+    resp = pushover.notify(settings[:pushover_user_token],
+                           message,
+                           {title: payload[:saved_search][:name]})
 
     unless resp.ok?
       puts "pushover: #{resp.to_s}"
 
       raise_config_error "Failed to post to Pushover"
     end
+  end
+
   
+  def pushover
+    @pushover ||= Rushover::Client.new(settings[:pushover_app_token])
   end
   
 end

@@ -1,6 +1,19 @@
 require File.expand_path('../helper', __FILE__)
 
+require 'fakeweb'
+
 class PushoverTest < PapertrailServices::TestCase
+
+  def setup
+    FakeWeb.register_uri(:post, "https://api.pushover.net/1/messages.json",
+                         :body => { :status => 1 }.to_json,
+                         :content_type => "application/json")
+  end
+
+  def teardown
+    FakeWeb.clean_registry
+  end
+  
   def test_config
     svc = service(:logs, {:pushover_app_token => 'a sample token'}, payload)
     assert_raises(PapertrailServices::Service::ConfigurationError) { svc.receive_logs }
@@ -18,8 +31,6 @@ class PushoverTest < PapertrailServices::TestCase
       [200, {}, '']
     end
 
-    # svc.receive_logs
-    # TODO - stub the actual post
   end
 
   def service(*args)
