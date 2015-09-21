@@ -27,7 +27,6 @@ class Service::Zapier < Service
     
     unless resp.status == 200
       puts "zapier: #{resp.to_s}"
- 
       raise_config_error "Failed to post to Zapier"
     end
   end

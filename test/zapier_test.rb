@@ -24,8 +24,7 @@ class ZapierTest < PapertrailServices::TestCase
       [200, {:content_type => "application/json"}, { :status => 1 }.to_json]
 
       svc.receive_logs
-    end 
-
+    end
   end
 
   def service(*args)
