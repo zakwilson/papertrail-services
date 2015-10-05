@@ -22,10 +22,10 @@ class Service::Zapier < Service
     size_limit= 5242880 # Zapier specified 5mb as of September 2015
     
     raise_config_error 'Missing Zapier URL' if
-      settings[:zapier_url].to_s.empty?
+      settings[:url].to_s.empty?
 
     http.headers['content-type'] = 'application/json'
-    resp = http_post settings[:zapier_url], json_limited(payload, size_limit)
+    resp = http_post settings[:url], json_limited(payload, size_limit)
     
     unless resp.status == 200
       puts "zapier: #{resp.to_s}"
