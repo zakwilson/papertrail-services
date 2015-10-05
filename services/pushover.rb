@@ -7,9 +7,9 @@ class Service::Pushover < Service
 
   def receive_logs
     raise_config_error 'Missing pushover app token' if
-      settings[:pushover_app_token].to_s.empty?
+      settings[:token].to_s.empty?
     raise_config_error 'Missing pushover user token' if
-      settings[:pushover_user_token].to_s.empty?
+      settings[:user_key].to_s.empty?
 
     message = payload[:events].map { |item|
       item[:message]
@@ -21,7 +21,7 @@ class Service::Pushover < Service
       raise_config_error "Could not process payload"
     end
 
-    resp = pushover.notify(settings[:pushover_user_token],
+    resp = pushover.notify(settings[:user_key],
                            message,
                            {title: payload[:saved_search][:name]})
 
@@ -34,7 +34,7 @@ class Service::Pushover < Service
 
   
   def pushover
-    @pushover ||= Rushover::Client.new(settings[:pushover_app_token])
+    @pushover ||= Rushover::Client.new(settings[:token])
   end
   
 end

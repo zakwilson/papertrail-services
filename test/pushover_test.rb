@@ -15,16 +15,16 @@ class PushoverTest < PapertrailServices::TestCase
   end
   
   def test_config
-    svc = service(:logs, {:pushover_app_token => 'a sample token'}, payload)
+    svc = service(:logs, {:token => 'a sample token'}, payload)
     assert_raises(PapertrailServices::Service::ConfigurationError) { svc.receive_logs }
 
-    svc = service(:logs, {:pushover_user_token => 'a different token'}, payload)
+    svc = service(:logs, {:user_key => 'a different token'}, payload)
     assert_raises(PapertrailServices::Service::ConfigurationError) { svc.receive_logs }
   end
   
   def test_logs
-    svc = service(:logs, {:pushover_app_token => 'a sample token',
-                          :pushover_user_token => 'a different token'},
+    svc = service(:logs, {:token => 'a sample token',
+                          :user_key => 'a different token'},
                   payload)
 
     http_stubs.post '/services/hooks/incoming-webhook' do |env|
