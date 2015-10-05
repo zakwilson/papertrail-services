@@ -34,7 +34,6 @@ gem 'aws-sdk', '~> 1.43.3'
 
 # service :pushover
 gem 'rushover'
-gem 'fakeweb'
 
 group :development do
   gem 'foreman'
