@@ -28,7 +28,7 @@ class Service::Slack < Service
   end
 
   # Slack truncates attachments at 8000 bytes
-  def format_content(events, limit = 7990)
+  def format_content(events, limit = 7500)
     body = ''
 
     events.each do |event|
