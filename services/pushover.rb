@@ -1,8 +1,5 @@
 # coding: utf-8
 
-require 'rushover'
-require 'time'
-
 class Service::Pushover < Service
   attr_writer :pushover
 
@@ -13,7 +10,7 @@ class Service::Pushover < Service
       settings[:user_key].to_s.empty?
 
     events = payload[:events]
-    
+
     hosts = events.collect { |e| e[:source_name] }.sort.uniq
     title = payload[:saved_search][:name]
     if hosts.length < 5
@@ -46,9 +43,9 @@ class Service::Pushover < Service
     end
   end
 
-  
+
   def pushover
     @pushover ||= Rushover::Client.new(settings[:token])
   end
-  
+
 end
