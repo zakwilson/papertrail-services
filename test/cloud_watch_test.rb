@@ -1,28 +1,34 @@
 require File.expand_path('../helper', __FILE__)
+require 'aws-sdk'
 
 class CloudWatchTest < PapertrailServices::TestCase
-  class MockAcwInterface
-    def put_metric_data(options)
-      options[:data_points] ? true : false
-    end
-  end
 
   def setup
-    @common_settings = { :aws_access_key_id => '123', :aws_secret_access_key => '456' }
+    @common_settings = { aws_access_key_id: '123',
+                         aws_secret_access_key: '456',
+                         cloudwatch_namespace: "papertrail-test",
+                         cloudwatch_metric_name: "test-metric",
+                       }
+    new_payload = payload # payload has some magic and can't be modified
+    new_payload[:events].each do |e|
+      # Cloudwatch demands recent dates
+      e[:received_at] = (Time.now - rand(0..100)).iso8601
+    end
+        
+    @svc = service(:logs,
+                   metric_regex_params(3, :dimension => 'Region=West;Element=page').merge(@common_settings),
+                   new_payload)
+  end
+
+  def test_size
+    assert_raises(PapertrailServices::Service::ConfigurationError) {
+      @svc.prepare_post_data(@svc.payload[:events], size_limit=8)
+    }
   end
 
   def test_logs
-    svc = service(:logs,
-      metric_regex_params(3, :dimension => 'Region=West;Element=page').merge(@common_settings),
-      payload)
-
-    svc.aws_connection.build do |b|
-      b.adapter :test do |stub|
-        stub.post('/') { [ 200, nil, '' ]}
-      end
-    end
-
-    svc.receive_logs
+    AWS.stub!
+    @svc.receive_logs
   end
 
   def service(*args)
