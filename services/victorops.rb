@@ -3,8 +3,8 @@
 class Service::Victorops < Service
 
   def receive_logs
-    raise_config_error 'Missing Victorops API key' if
-      settings[:api_key].to_s.empty?
+    raise_config_error 'Missing Victorops API key (token)' if
+      settings[:token].to_s.empty?
     raise_config_error 'Missing Victorops routing key' if
       settings[:routing_key].to_s.empty?
 
@@ -36,7 +36,7 @@ class Service::Victorops < Service
       state_message: message,
     }
     
-    url = "https://alert.victorops.com/integrations/generic/20131114/alert/#{settings[:api_key]}/#{settings[:routing_key]}"
+    url = "https://alert.victorops.com/integrations/generic/20131114/alert/#{settings[:token]}/#{settings[:routing_key]}"
 
     resp = http_post url, postdata.to_json
 

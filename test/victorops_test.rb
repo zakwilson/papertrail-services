@@ -3,7 +3,7 @@ require File.expand_path('../helper', __FILE__)
 class VictoropsTest < PapertrailServices::TestCase
 
   def test_config
-    svc = service(:logs, {:api_key => 'a sample key'}, payload)
+    svc = service(:logs, {:token => 'a sample key'}, payload)
     assert_raises(PapertrailServices::Service::ConfigurationError) { svc.receive_logs }
 
     svc = service(:logs, {:routing_key => 'a different key'}, payload)
@@ -11,7 +11,7 @@ class VictoropsTest < PapertrailServices::TestCase
   end
   
   def test_logs
-    svc = service(:logs, {:api_key => 'a sample token',
+    svc = service(:logs, {:token => 'a sample token',
                           :routing_key => 'a different token'},
                   payload)
 
