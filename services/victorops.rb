@@ -13,9 +13,12 @@ class Service::Victorops < Service
     hosts = events.collect { |e| e[:source_name] }.sort.uniq
     entity_id = payload[:saved_search][:name]
     if hosts.length < 5
-        entity_id = "#{entity_id} (#{hosts.join(', ')})"
-      else
-        entity_id = "#{entity_id} (from #{hosts.length} hosts)"
+      entity_display_name = "(#{hosts.join(', ')})"
+      state_message = "#{entity_id} #{entity_display_name}"
+
+    else
+      entity_display_name = "(from #{hosts.length} hosts)"
+      state_message = "#{entity_id} #{entity_display_name}"
     end
 
     message = events.collect { |item|
@@ -30,10 +33,11 @@ class Service::Victorops < Service
 
     postdata = {
       entity_id: entity_id,
+      entity_display_name: entity_display_name,
       monitoring_tool: "Papertrail",
-      message_type: "INFO",
+      message_type: (settings[:message_type] or "INFO"),
       timestamp: Time.iso8601(events[0][:received_at]).to_i,
-      state_message: message,
+      state_message: state_message,
     }
     
     url = "https://alert.victorops.com/integrations/generic/20131114/alert/#{settings[:token]}/#{settings[:routing_key]}"
