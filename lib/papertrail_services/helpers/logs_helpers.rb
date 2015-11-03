@@ -57,6 +57,15 @@ module PapertrailServices
         "#{time.strftime('%b %d %X')} #{message[:source_name]} #{message[:program]}: #{message[:message]}"
       end
 
+      def source_names(events, count)
+        hosts = events.collect { |e| e[:source_name] }.sort.uniq
+        if hosts.length < count
+          "#{hosts.join(', ')}"
+        else
+          "from #{hosts.length} hosts"
+        end
+      end
+
       def erb(template, target_binding)
         ERB.new(template, nil, '-').result(target_binding)
       end

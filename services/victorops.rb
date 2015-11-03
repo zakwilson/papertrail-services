@@ -9,22 +9,13 @@ class Service::Victorops < Service
       settings[:routing_key].to_s.empty?
 
     events = payload[:events]
-
     hosts = events.collect { |e| e[:source_name] }.sort.uniq
     entity_id = payload[:saved_search][:name]
-    if hosts.length < 5
-      entity_display_name = "(#{hosts.join(', ')})"
-      state_message = "#{entity_id} #{entity_display_name}"
-
-    else
-      entity_display_name = "(from #{hosts.length} hosts)"
-      state_message = "#{entity_id} #{entity_display_name}"
-    end
-
+    entity_display_name = source_names(events, 5)
+    state_message = "#{entity_id} (#{entity_display_name})"
     message = events.collect { |item|
       syslog_format(item)
     }.join(", ")
-
     message = message[0..1020] + "..." if message.length > 1024
 
     if message.empty?
