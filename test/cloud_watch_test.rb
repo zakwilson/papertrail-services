@@ -26,6 +26,12 @@ class CloudWatchTest < PapertrailServices::TestCase
     }
   end
 
+  def test_counts
+    counts = @svc.event_counts_by_received_at(payload[:events])
+    # Static value for counts based on current sample payload; will fail if payload is changed
+    assert_equal(counts, {1311369001=>1, 1311369010=>1, 1311370201=>1, 1311370801=>1, 1311371401=>1})
+  end
+
   def test_logs
     AWS.stub!
     @svc.receive_logs
