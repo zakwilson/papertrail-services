@@ -2,7 +2,7 @@ require 'aws-sdk'
 
 class Service::CloudWatch < Service
 
-  def prepare_post_data(events, size_limit=8192, max_days = 14)
+  def prepare_post_data(events, size_limit = 8192, max_days = 14)
 
     counts = Hash.new do |h,k|
       h[k] = 0
@@ -15,22 +15,18 @@ class Service::CloudWatch < Service
 
     metric_data = counts.map do |time, count|
       timestamp = Time.at(time)
-      if timestamp < Time.now - 60*60*24*14
+      if timestamp < Time.now - 60 * 60 * 24 * max_days
         raise_config_error "Cloudwatch will not accept #{timestamp.iso8601} because it is more than #{max_days} days old"
       end
       {
-        metric_name: settings[:cloudwatch_metric_name],
+        metric_name: settings[:metric_name],
         timestamp: timestamp.iso8601,
-        statistic_values: { sample_count: count,
-                            sum: count,
-                            minimum: count,
-                            maximum: count,
-                          },
+        value: count,
       }
     end
 
     post_data = {
-      namespace: settings[:cloudwatch_namespace],
+      namespace: settings[:namespace],
       metric_data: metric_data
     }
 
@@ -43,7 +39,7 @@ class Service::CloudWatch < Service
     else
       metric_data.each do |d| # one for each timestamp is as small as this can go
         post_data = {
-          namespace: settings[:cloudwatch_namespace],
+          namespace: settings[:namespace],
           metric_data: d
         }
         post_json = post_data.to_json
@@ -61,8 +57,8 @@ class Service::CloudWatch < Service
     required_settings = [:aws_access_key_id,
                          :aws_secret_access_key,
                          :aws_region,
-                         :cloudwatch_namespace,
-                         :cloudwatch_metric_name,
+                         :namespace,
+                         :metric_name,
                         ]
     required_settings.each do |setting|
       raise_config_error "Missing required setting #{setting}" if
