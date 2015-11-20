@@ -57,6 +57,15 @@ module PapertrailServices
         "#{time.strftime('%b %d %X')} #{message[:source_name]} #{message[:program]}: #{message[:message]}"
       end
 
+      def source_names(events, count)
+        hosts = events.collect { |e| e[:source_name] }.sort.uniq
+        if hosts.length < count
+          "#{hosts.join(', ')}"
+        else
+          "from #{hosts.length} hosts"
+        end
+      end
+
       def event_counts_by_received_at(events)
         counts = Hash.new do |h,k|
           h[k] = 0
