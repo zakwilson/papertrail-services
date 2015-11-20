@@ -66,6 +66,19 @@ module PapertrailServices
         end
       end
 
+      def event_counts_by_received_at(events)
+        counts = Hash.new do |h,k|
+          h[k] = 0
+        end
+
+        events.each do |event|
+          timestamp = Time.iso8601(event[:received_at]).to_i
+          counts[timestamp] += 1
+        end
+        
+        counts
+      end
+
       def erb(template, target_binding)
         ERB.new(template, nil, '-').result(target_binding)
       end
