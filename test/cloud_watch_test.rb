@@ -14,9 +14,9 @@ class CloudWatchTest < PapertrailServices::TestCase
       # Cloudwatch demands recent dates
       e[:received_at] = (Time.now - rand(0..100)).iso8601
     end
-        
+
     @svc = service(:logs,
-                   metric_regex_params(3, :dimension => 'Region=West;Element=page').merge(@common_settings),
+                   @common_settings,
                    new_payload)
   end
 
@@ -39,14 +39,5 @@ class CloudWatchTest < PapertrailServices::TestCase
 
   def service(*args)
     super Service::CloudWatch, *args
-  end
-
-  def metric_regex_params(count, metric_options = { :regex => 'abc' })
-    metrics = {}
-    count.times.map do |i|
-      metrics[i] = { :name => "MetricName#{i}" }
-      metrics[i].merge!(metric_options)
-    end
-    { :metric => metrics }
   end
 end

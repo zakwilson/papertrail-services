@@ -9,7 +9,7 @@ class Service::CloudWatch < Service
     metric_data = counts.map do |time, count|
       timestamp = Time.at(time)
       if timestamp < Time.now - 60 * 60 * 24 * max_days
-        raise_config_error "Cloudwatch will not accept #{timestamp.iso8601} because it is more than #{max_days} days old"
+        raise_config_error "CloudWatch will not accept #{timestamp.iso8601} timestamp; it is more than #{max_days} days old"
       end
       {
         metric_name: settings[:metric_name],
@@ -37,7 +37,7 @@ class Service::CloudWatch < Service
         }
         post_json = post_data.to_json
         if post_json.length > size_limit # pathological case
-          raise_config_error "Something about this input makes it impossible to stay under the Cloudwatch #{size_limit} byte limit"
+          raise_config_error "Logs exceed CloudWatch payload limit of #{size_limit} bytes"
         end
         ret << post_json
       end
@@ -45,7 +45,7 @@ class Service::CloudWatch < Service
 
     ret
   end
-  
+
   def receive_logs
     required_settings = [:aws_access_key_id,
                          :aws_secret_access_key,
@@ -57,7 +57,7 @@ class Service::CloudWatch < Service
       raise_config_error "Missing required setting #{setting}" if
         setting.to_s.empty?
     end
-    
+
     if settings[:metric_namespace].present?
       metric_namespace = settings[:metric_namespace]
     else
@@ -75,6 +75,6 @@ class Service::CloudWatch < Service
     post_array.each do |post_data|
       resp = cloudwatch.put_metric_data post_data
     end
-    
+
   end
 end
