@@ -23,7 +23,7 @@ class Service::CloudWatch < Service
     metric_data = metrics_from_counts(counts, max_days)
 
     post_data = {
-      namespace: settings[:namespace],
+      namespace: settings[:metric_namespace],
       metric_data: metric_data
     }
 
@@ -36,7 +36,7 @@ class Service::CloudWatch < Service
     else
       metric_data.each do |d| # one for each timestamp is as small as this can go
         post_data = {
-          namespace: settings[:namespace],
+          namespace: settings[:metric_namespace],
           metric_data: d
         }
         post_json = post_data.to_json
