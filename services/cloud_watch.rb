@@ -54,12 +54,12 @@ class Service::CloudWatch < Service
     required_settings = [:aws_access_key_id,
                          :aws_secret_access_key,
                          :aws_region,
-                         :namespace,
+                         :metric_namespace,
                          :metric_name,
                         ]
     required_settings.each do |setting|
       raise_config_error "Missing required setting #{setting}" if
-        setting.to_s.empty?
+        settings[setting].to_s.empty?
     end
 
     if settings[:metric_namespace].present?
