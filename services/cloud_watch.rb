@@ -2,11 +2,8 @@ require 'aws-sdk'
 
 class Service::CloudWatch < Service
 
-  def prepare_post_data(events, size_limit = 8192, max_days = 14)
-
-    counts = event_counts_by_received_at(events)
-
-    metric_data = counts.map do |time, count|
+  def metrics_from_counts(counts, max_days = 14)
+    counts.map do |time, count|
       timestamp = Time.at(time)
       if timestamp < Time.now - 60 * 60 * 24 * max_days
         raise_config_error "CloudWatch will not accept #{timestamp.iso8601} timestamp; it is more than #{max_days} days old"
@@ -17,6 +14,13 @@ class Service::CloudWatch < Service
         value: count,
       }
     end
+  end
+
+  def prepare_post_data(events, size_limit = 8192, max_days = 14)
+
+    counts = event_counts_by_received_at(events)
+
+    metric_data = metrics_from_counts(counts, max_days)
 
     post_data = {
       namespace: settings[:namespace],
