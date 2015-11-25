@@ -32,9 +32,9 @@ class Service::CloudWatch < Service
     post_json = post_data.to_json
 
     if post_json.length <= size_limit
-      ret << post_data
+      [post_data]
     else
-      metric_data.each do |d| # one for each timestamp is as small as this can go
+      metric_data.map do |d| # one for each timestamp is as small as this can go
         post_data = {
           namespace: settings[:metric_namespace],
           metric_data: d
@@ -43,11 +43,9 @@ class Service::CloudWatch < Service
         if post_json.length > size_limit # pathological case
           raise_config_error "Logs exceed CloudWatch payload limit of #{size_limit} bytes"
         end
-        ret << post_json
+        post_json
       end
     end
-
-    ret
   end
 
   def receive_logs
